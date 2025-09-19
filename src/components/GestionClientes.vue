@@ -1,12 +1,11 @@
 <script setup>
+
 </script>
 
 <template>
-    <h1>Hola Mundo</h1>
+  <p>Gestión de Clientes</p>
 </template>
 
 <style scoped>
-h1 {
-    color: blue;
-}
+
 </style>
