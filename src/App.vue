@@ -19,10 +19,9 @@ import GestionClientes from './components/GestionClientes.vue'
 <style scoped>
 #app {
   max-width: 80%;
-  margin: 0 auto;       /* centra horizontalmente */
-  height: 100vh;        /* equivalente a vh-100 */
+  margin: 0 auto;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
-
 </style>
