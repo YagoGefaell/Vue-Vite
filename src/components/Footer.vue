@@ -1,14 +1,53 @@
 <template>
-  <footer class="navbar navbar-dark bg-primary position-sticky top-0">
-    <div class="container">
-      <p class="mb-1">&copy; {{ new Date().getFullYear() }} MiSitio. Todos los derechos reservados.</p>
+  <footer class="custom-footer mt-auto py-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+      <p class="mb-2 mb-md-0 text-light small">
+        &copy; {{ new Date().getFullYear() }} MiSitio. Todos los derechos reservados.
+      </p>
       <ul class="list-inline mb-0">
-        <li class="list-inline-item"><a href="#" class="text-light text-decoration-none">Aviso legal</a></li>
-        <li class="list-inline-item"><a href="#" class="text-light text-decoration-none">Política de privacidad</a></li>
-        <li class="list-inline-item"><a href="#" class="text-light text-decoration-none">Contacto</a></li>
+        <li class="list-inline-item">
+          <a href="#" class="footer-link">Aviso legal</a>
+        </li>
+        <li class="list-inline-item">
+          <a href="#" class="footer-link">Política de privacidad</a>
+        </li>
+        <li class="list-inline-item">
+          <a href="#" class="footer-link">Contacto</a>
+        </li>
       </ul>
     </div>
   </footer>
 </template>
 
-<script setup></script>
+<script setup>
+// No necesita lógica
+</script>
+
+<style scoped>
+.custom-footer {
+  background: linear-gradient(90deg, #0062E6 0%, #33AEFF 100%);
+  color: #fff;
+  box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+@media (max-width: 767px) {
+  .custom-footer .container {
+    text-align: center;
+  }
+  .custom-footer ul.list-inline {
+    margin-top: 0.5rem;
+  }
+}
+</style>
