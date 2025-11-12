@@ -26,7 +26,10 @@
             <router-link class="nav-link" to="/">Inicio</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/Modelos">Modelos</router-link>
+            <router-link class="nav-link" to="/coches">Coches</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/modelos">Modelos</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/clientes">Clientes</router-link>

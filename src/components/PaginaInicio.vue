@@ -1,104 +1,96 @@
 <template>
-  <div class="home-container">
-    <!-- Hero -->
-    <section class="hero bg-dark text-light d-flex align-items-center" style="min-height: 70vh; background: url('/assets/hero-bmw.jpg') center/cover no-repeat;">
-      <div class="container text-center">
-        <h1 class="display-4 fw-bold">Bienvenido a BMW Teis</h1>
-        <p class="lead mb-4">Descubre los últimos modelos, innovación y potencia al volante</p>
-        <router-link to="/clientes" class="btn btn-primary btn-lg me-2">Ver Catálogo</router-link>
-        <router-link to="/contacto" class="btn btn-outline-light btn-lg">Contáctanos</router-link>
-      </div>
-    </section>
+  <section class="video-hero position-relative text-light text-center d-flex flex-column justify-content-center align-items-center">
+    <!-- 🎥 Vídeo de fondo -->
+    <video
+      ref="videoPlayer"
+      autoplay
+      muted
+      playsinline
+      class="video-bg"
+    >
+      Tu navegador no soporta video HTML5.
+    </video>
 
-    <!-- Modelos Destacados -->
-    <section class="py-5">
-      <div class="container">
-        <h2 class="text-center fw-bold mb-5">Modelos Destacados</h2>
-        <div class="row g-4">
-          <div class="col-md-4" v-for="(coche, index) in cochesDestacados" :key="index">
-            <div class="card h-100 shadow-sm border-0">
-              <img :src="coche.imagen" class="card-img-top" :alt="coche.modelo">
-              <div class="card-body">
-                <h5 class="card-title fw-bold">{{ coche.modelo }}</h5>
-                <p class="card-text text-muted">{{ coche.descripcion }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-semibold fs-5">{{ coche.precio }}</span>
-                  <router-link :to="`/coches/${coche.id}`" class="btn btn-primary btn-sm">Ver detalles</router-link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- 🖋 Contenido encima -->
+    <div class="content position-relative z-2">
+      <h1 class="display-3 fw-bold mb-3">Bienvenido a Teis Motor</h1>
+      <p class="lead mb-4">Innovación, potencia y diseño en cada detalle</p>
+      <div>
+        <router-link to="/clientes" class="btn btn-primary btn-lg me-3 shadow">
+          Ver Catálogo
+        </router-link>
+        <router-link to="/contacto" class="btn btn-outline-light btn-lg shadow">
+          Contáctanos
+        </router-link>
       </div>
-    </section>
+    </div>
 
-    <!-- Llamado a la acción -->
-    <section class="cta bg-primary text-light py-5 mt-5">
-      <div class="container text-center">
-        <h3 class="fw-bold mb-3">¿Listo para conducir tu BMW?</h3>
-        <p class="mb-4">Solicita una prueba de conducción o contáctanos para más información</p>
-        <router-link to="/contacto" class="btn btn-outline-light btn-lg">Solicitar prueba</router-link>
-      </div>
-    </section>
-  </div>
+    <!-- 🔲 Capa oscura para mejor legibilidad -->
+    <div class="overlay"></div>
+  </section>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
-// Ejemplo de coches destacados
-const cochesDestacados = ref([
-  {
-    id: 1,
-    modelo: 'BMW Serie 3',
-    descripcion: 'Deportivo, elegante y lleno de tecnología.',
-    precio: '50.000 €',
-    imagen: '/assets/bmw-serie3.jpg'
-  },
-  {
-    id: 2,
-    modelo: 'BMW X5',
-    descripcion: 'SUV de lujo, potente y espacioso.',
-    precio: '75.000 €',
-    imagen: '/assets/bmw-x5.jpg'
-  },
-  {
-    id: 3,
-    modelo: 'BMW i8',
-    descripcion: 'Híbrido deportivo con diseño futurista.',
-    precio: '140.000 €',
-    imagen: '/assets/bmw-i8.jpg'
-  }
-])
+// ✅ Importamos correctamente los vídeos (Webpack/Vite los resuelve bien)
+import coche1 from '@/assets/videos/coche1.mp4'
+import coche2 from '@/assets/videos/coche2.mp4'
+import coche3 from '@/assets/videos/coche3.mp4'
+
+const videoPlayer = ref(null)
+const videos = [coche1, coche2, coche3]
+
+let currentIndex = 0
+
+onMounted(() => {
+  const player = videoPlayer.value
+  if (!player) return
+
+  // Cargar primer vídeo
+  player.src = videos[currentIndex]
+  player.play()
+
+  // Al terminar, pasar al siguiente vídeo
+  player.addEventListener('ended', () => {
+    currentIndex = (currentIndex + 1) % videos.length
+    player.src = videos[currentIndex]
+    player.play()
+  })
+})
 </script>
 
 <style scoped>
-.hero {
+.video-hero {
   position: relative;
-  color: #fff;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  height: 100vh;
+  overflow: hidden;
 }
 
-.hero .btn {
-  min-width: 160px;
-}
-
-.card img {
-  height: 200px;
+/* 🎬 Video ocupa todo el fondo */
+.video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  z-index: 0;
 }
 
-.cta {
-  background: linear-gradient(90deg, #0062E6 0%, #33AEFF 100%);
+/* 🕶 Capa oscura semitransparente */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  z-index: 1;
 }
 
-@media (max-width: 767px) {
-  .hero {
-    min-height: 50vh;
-  }
-
-  .card img {
-    height: 180px;
-  }
+/* 🖋 Texto y botones encima */
+.content {
+  z-index: 2;
 }
 </style>

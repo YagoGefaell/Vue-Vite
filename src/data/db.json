@@ -360,6 +360,44 @@
       "titulo": "La UE dando palos de ciego en el mundo del motor",
       "contenido": "A pesar del firme respaldo de países como España y Francia a la meta de 2035 para prohibir la venta de coches nuevos con motores de combustión interna en la Unión Europea, Alemania ha impulsado una revisión de esta normativa ante la presión de los fabricantes de automóviles. Esta directiva forma parte del Pact Verde Europeo y pretende acelerar el fin de los combustibles fósiles en el transporte.",
       "fecha": "2025-10-24"
+    },
+    {
+      "id": "ef89",
+      "titulo": "hooalsdfasdfa",
+      "contenido": "asdfawefasdvaesdfgvaDSFVadsbh",
+      "fecha": "2025-11-12"
+    }
+  ],
+  "coches": [
+    {
+      "matricula": "1234ABC",
+      "marca": "BMW",
+      "modelo": "Serie 3",
+      "fechaAlta": "2025-10-24",
+      "dueno": "Pepe Rodriguez",
+      "itv": true,
+      "combustible": "Gasolina",
+      "id": "c1a2"
+    },
+    {
+      "matricula": "5678DEF",
+      "marca": "Audi",
+      "modelo": "A4",
+      "fechaAlta": "2025-10-24",
+      "dueno": "Mariano Rajoi",
+      "itv": false,
+      "combustible": "Diésel",
+      "id": "d3b4"
+    },
+    {
+      "id": "5b06",
+      "matricula": "3919GPX",
+      "modelo": "Verso",
+      "combustible": "Diésel",
+      "fechaAlta": "2025-12-05",
+      "dueno": "Yago Gefaell",
+      "marca": "Kia",
+      "itv": true
     }
   ]
 }

@@ -6,13 +6,13 @@
       </p>
       <ul class="list-inline mb-0">
         <li class="list-inline-item">
-          <a href="#" class="footer-link">Aviso legal</a>
+          <router-link to="/aviso-legal" class="footer-link">Aviso legal</router-link>
         </li>
         <li class="list-inline-item">
-          <a href="#" class="footer-link">Política de privacidad</a>
+          <router-link to="/politica-privacidad" class="footer-link">Política de privacidad</router-link>
         </li>
         <li class="list-inline-item">
-          <a href="#" class="footer-link">Contacto</a>
+          <router-link to="/contacto" class="footer-link">Contacto</router-link>
         </li>
       </ul>
     </div>
