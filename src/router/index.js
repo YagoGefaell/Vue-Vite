@@ -3,6 +3,7 @@ import PaginaInicio from '../components/PaginaInicio.vue'
 import GestionClientes from '../components/GestionClientes.vue'
 import Login from '../components/Login.vue'
 import Noticias from '../components/Noticias.vue'
+import Modelos from '../components/Modelos.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 
@@ -31,6 +32,11 @@ const routes = [
         path: '/:pathMatch(.*)*',
         name: 'NotFound',
         component: NotFound
+    },
+    {
+        path: '/modelos',
+        name: 'Modelos',
+        component: Modelos
     }
 ]
 

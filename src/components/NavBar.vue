@@ -3,7 +3,7 @@
     <div class="container-fluid px-4">
       <!-- Marca / Logo -->
       <router-link class="navbar-brand fw-bold d-flex align-items-center gap-2" to="/">
-        <img src="../assets/TeisMotor.svg" alt="logo" style="width: 40px; height: 40px;"/>
+        <img src="../assets/TeisMotor.svg" alt="logo" style="width: 50px; height: 50px;"/>
       </router-link>
 
       <!-- Botón Hamburguesa -->
@@ -24,6 +24,9 @@
         <ul class="navbar-nav align-items-lg-center gap-lg-3 mt-3 mt-lg-0">
           <li class="nav-item">
             <router-link class="nav-link" to="/">Inicio</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/Modelos">Modelos</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/clientes">Clientes</router-link>
