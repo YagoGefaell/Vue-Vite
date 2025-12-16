@@ -1,11 +1,13 @@
 import NotFound from '../components/NotFound.vue'
 import PaginaInicio from '../components/PaginaInicio.vue'
 import GestionClientes from '../components/GestionClientes.vue'
-import Login from '../components/Login.vue'
 import Noticias from '../components/Noticias.vue'
 import Modelos from '../components/Modelos.vue'
 import AvisoLegal from '../components/AvisoLegal.vue'
 import PoliticaPrivacidad from '../components/PoliticaPrivacidad.vue'
+import Ventas from '../components/Ventas.vue'
+import TablaLogin from '../components/TablaLogin.vue'
+import CitasTaller from '../components/CitasTaller.vue'
 import Coches from '../components/Coches.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -23,8 +25,8 @@ const routes = [
     },
     {
         path: '/login',
-        name: 'Login',
-        component: Login
+        name: 'TablaLogin',
+        component: TablaLogin
     },
     {
         path: '/noticias',
@@ -50,6 +52,16 @@ const routes = [
         path: '/politica-privacidad',
         name: 'PoliticaPrivacidad',
         component: PoliticaPrivacidad
+    },
+    {
+        path: '/ventas',
+        name: 'Ventas',
+        component: Ventas
+    },
+    {
+        path: '/taller',
+        name: 'CitasTaller',
+        component: CitasTaller
     },
     {
         path: '/coches',

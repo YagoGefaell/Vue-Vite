@@ -1,30 +1,57 @@
-import express from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import path from 'path';
+import express from "express";
+import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config(path.resolve(process.cwd(), '.env'));
+// a diferencia de json-server, aquí necesita configurar las rutas y controladores manualmente
+// json-server crea automáticamente las rutas basadas en el archivo JSON, mongoose requiere definir esquemas y modelos
+// MONGOSEE NO SABE NADA DE RUTAS CONTROLADRES Y MODELOS, HAY QUE CREARLOS MANUALMENTE
 
+import articulosRoutes from "./articulosRoutes.js"; // ruta al router backend
+import authRoutes from "./authRoutes.js"; // ruta al router backend
+import contactoRoutes from "./contactoRoutes.js"; // ruta al router backend
+
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/mydatabase';
+const PORT = process.env.PORT || 5000; // Use PORT from environment or default to 5000
 
-app.use(cors());
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Middleware - Configuración de CORS mejorada para servicios externos
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Content-Range", "X-Content-Range"],
+  })
+);
+
 app.use(express.json());
 
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-  console.log('Conectado a la base de datos');
-})
-.catch((error) => {
-  console.error('Error al conectar a la base de datos:', error);
-});
+// Rutas DE MONGOOSE, JSON SERVER NO ES NECESARIO LAS RUTAS LAS CREA AUTOMATICAMENTE
+// json-server es un backend ya construido.
+// Express es un backend que TÚ construyes.
+// Por eso json-server no requiere rutas y Express sí.
+app.use("/api/articulos", articulosRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/contacto", contactoRoutes);
 
+// Verificar variable
+//console.log("MONGO_URI =", process.env.MONGO_URI);
 
+/// Conexión a MongoDB
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Connected to MongoDB a la base de datos BBDD"))
+  .catch((err) => console.error("Could not connect to MongoDB:", err));
+
+//Iniciar el servidor Express en el puerto especificado
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en el puerto ${PORT}`);
+  console.log(`Server Express está corriendo en el puerto: ${PORT}`);
 });
