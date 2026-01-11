@@ -1,8 +1,7 @@
+const API_URL = "http://localhost:5000/api/contacto";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/contacto";
-
-export const enviarContacto = async (formulario) => {
+export async function enviarContacto(formulario) {
   try {
     const response = await axios.post(API_URL, formulario);
     return response.data;
@@ -10,4 +9,4 @@ export const enviarContacto = async (formulario) => {
     console.error("Error al enviar contacto:", error);
     throw error;
   }
-};
+}

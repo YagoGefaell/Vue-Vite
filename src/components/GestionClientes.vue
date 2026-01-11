@@ -1,30 +1,36 @@
 <template>
-  <div
-    class="container mx-auto mt-2 p-3 my-1 border rounded-0 shadow-sm min-vh-75 bg-light"
-  >
-    <h3 class="text-center my-2 gestion-header"><i class="bi bi-people-fill"></i> Gestión de Clientes</h3>
+  <div class="container-fluid my-4 p-4 border rounded-4 shadow-lg bg-white">
+    <h4
+      class="text-center mb-4 fw-semibold text-primary border-bottom pb-2 mt-2"
+    >
+      <i class="bi bi-person me-2"></i>Registro de Clientes
+    </h4>
     <!-- Formulario -->
-    <form @submit.prevent="guardarCliente" class="mb-4">
+    <form
+      @submit.prevent="guardarCliente"
+      class="p-4 bg-light rounded-3 border shadow-sm mb-4"
+    >
       <!-- DNI con validación visual -->
-      <div class="mb-3 row align-items-center">
+      <div class="mb-3 row align-items-center mt-3">
         <!-- Columna DNI -->
         <div class="col-md-4 d-flex align-items-center">
-          <label for="dni" class="form-label mb-0 w-25">DNI: </label>
-          <div class="flex-grow-1 d-flex align-items-center">
+          <label for="dni" class="form-label mb-0 w-25 fw-medium">DNI: </label>
+          <div class="flex-grow-1 d-flex">
             <input
               type="text"
               id="dni"
               v-model="nuevoCliente.dni"
               @blur="validarDni"
-              class="form-control w-auto w-25 text-center ms-0"
+              class="form-control w-auto me-2"
               :class="{ 'is-invalid': !dniValido }"
-              required
-              oninvalid="this.setCustomValidity('El DNI/NIE es obligatorio')"
+              :disabled="editando"
+              oninvalid="this.setCustomValidity('Por favor, rellene este campo')"
               oninput="this.setCustomValidity('')"
+              required
             />
             <button
               type="button"
-              class="btn btn btn-primary ms-3 border-0 shadow-none rounded-0"
+              class="btn btn-primary shadow-none rounded-2"
               @click="buscarClientePorDNI(nuevoCliente.dni)"
             >
               <i class="bi bi-search"></i>
@@ -34,50 +40,68 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 d-flex align-items-center">
-          <label>Tipo de Cliente: </label>
-          <div class="ms-3">
-            <label for="radio-empresa">Empresa:</label>
-            <input
-              type="radio"
-              id="radio-empresa"
-              name="radio"
-              v-model="nuevoCliente.tipoCliente"
-              class="ms-2"
-            />
-          </div>
-          <div class="ms-3">
-            <label for="radio-particular">Particular:</label>
-            <input
-              type="radio"
-              id="radio-particular"
-              name="radio"
-              v-model="nuevoCliente.tipoCliente"
-              class="ms-2"
-            />
-          </div>
-        </div>
+
         <!-- Columna Fecha de Alta a la derecha -->
         <div
-          class="col-md-4 ms-auto d-flex align-items-center justify-content-end"
+          class="col-md-2 ms-4 d-flex align-items-center justify-content-end"
         >
-          <label for="fechaAlta" class="form-label me-2 mb-0 text-nowrap"
+          <label
+            for="fecha_alta"
+            class="form-label me-2 mb-0 text-nowrap fw-medium"
             >Fecha de Alta:</label
           >
           <input
             type="date"
-            id="fechaAlta"
-            v-model="nuevoCliente.fechaAlta"
+            id="fecha_alta"
+            v-model="nuevoCliente.fecha_alta"
             class="form-control w-auto"
+            required
+            oninvalid="this.setCustomValidity('Por favor, rellene este campo')"
+            oninput="this.setCustomValidity('')"
           />
+        </div>
+        <div
+          class="col-md-3 ms-5 d-flex align-items-center justify-content-center border rounded"
+        >
+          <label
+            for="tipo_cliente"
+            class="form-label me-2 mb-0 text-nowrap fw-medium me-3"
+            >Tipo de Cliente:</label
+          ><input
+            type="radio"
+            id="particular"
+            v-model="nuevoCliente.tipoCliente"
+            value="particular"
+            name="tipoCliente"
+          /><label class="ms-1">Particular</label>
+          <input
+            type="radio"
+            id="empresa"
+            v-model="nuevoCliente.tipoCliente"
+            value="empresa"
+            name="tipoCliente"
+            class="ms-2"
+          /><label class="ms-1">Empresa</label>
+        </div>
+        <div
+          v-if="admin"
+          class="col-md-2 ms-auto d-flex align-items-center justify-content-end"
+        >
+          <button
+            type="button"
+            class="btn btn-outline-primary rounded-2 border-1 shadow-none"
+            @click="resetForm"
+          >
+            <i class="bi bi-arrow-counterclockwise"></i>
+          </button>
         </div>
       </div>
 
-      <!-- FILA Nombre y Apellidos -->
+      <!-- Nombre y Apellidos -->
       <div class="mb-3 row g-3 align-items-center">
         <!-- Nombre -->
         <div class="col-md-5 d-flex align-items-center">
-          <label for="nombre" class="form-label mb-0 text-nowrap w-25"
+          <label for="nombre" class="form-label mb-0 text-nowrap w-25 fw-medium"
             >Nombre:</label
           >
           <input
@@ -92,7 +116,9 @@
 
         <!-- Apellidos -->
         <div class="col-md-6 d-flex align-items-center ms-5">
-          <label for="apellidos" class="form-label me-4 mb-0 text-nowrap"
+          <label
+            for="apellidos"
+            class="form-label me-4 mb-0 text-nowrap fw-medium"
             >Apellidos:</label
           >
           <input
@@ -106,59 +132,70 @@
         </div>
       </div>
 
-      <!-- FILA Email y Móvil -->
+      <!-- Email y Móvil -->
       <div class="mb-3 row g-3 align-items-center">
         <!-- Email -->
         <div class="col-md-5 d-flex align-items-center">
-          <label for="email" class="form-label mb-0 text-nowrap w-25"
+          <label for="email" class="form-label mb-0 text-nowrap w-25 fw-medium"
             >Email:</label
           >
-          <input
-            type="email"
-            id="email"
-            v-model="nuevoCliente.email"
-            class="form-control flex-grow-1"
-            @blur="validarEmail('email')"
-            :class="{ 'is-invalid': !emailValido }"
-            required
-          />
+          <div class="d-flex flex-column w-100">
+            <input
+              type="email"
+              id="email"
+              v-model="nuevoCliente.email"
+              class="form-control flex-grow-1"
+              @blur="validarEmail"
+              :class="{ 'is-invalid': !emailValido }"
+              required
+            />
+            <div v-if="!emailValido" class="invalid-feedback">
+              El email debe tener un formato válido (ej: usuario@dominio.com).
+            </div>
+          </div>
         </div>
 
         <!-- Móvil -->
-        <div class="col-md-3 d-flex align-items-center">
-          <label for="movil" class="form-label me-5 ms-5 mb-0 text-nowrap"
+        <div class="col-md-3 d-flex align-items-center gap-4">
+          <label
+            for="movil"
+            class="form-label me-4 ms-5 mb-0 text-nowrap fw-medium"
             >Móvil:</label
           >
           <input
             type="tel"
             id="movil"
             v-model="nuevoCliente.movil"
-            @blur="validarMovil('movil')"
+            @blur="validarMovil"
             class="form-control flex-grow-1 text-center"
             :class="{ 'is-invalid': !movilValido }"
           />
         </div>
       </div>
 
-      <!-- FILA Dirección, Provincia y Municipio -->
+      <!-- Dirección, Provincia y Municipio -->
       <div class="mb-3 row g-3 align-items-center">
         <!-- Dirección -->
         <div class="col-md-5 d-flex align-items-center">
-          <label for="direccion" class="form-label mb-0 w-25 text-nowrap"
+          <label
+            for="direccion"
+            class="form-label mb-0 w-25 text-nowrap fw-medium"
             >Dirección:</label
           >
           <input
             type="text"
             id="direccion"
             v-model="nuevoCliente.direccion"
-            @blur="capitalizarTexto('direccion')"
             class="form-control flex-grow-1"
+            @blur="capitalizarTexto('direccion')"
           />
         </div>
 
         <!-- Provincia -->
-        <div class="col-md-3 d-flex align-items-center">
-          <label for="provincia" class="form-label me-4 ms-5 mb-0 text-nowrap"
+        <div class="col-md-3 d-flex align-items-center gap-3">
+          <label
+            for="provincia"
+            class="form-label me-2 ms-5 mb-0 text-nowrap fw-medium"
             >Provincia:</label
           >
           <select
@@ -176,7 +213,9 @@
 
         <!-- Municipio -->
         <div class="col-md-3 d-flex align-items-center">
-          <label for="municipio" class="form-label me-2 ms-4 mb-0 text-nowrap"
+          <label
+            for="municipio"
+            class="form-label me-2 ms-4 mb-0 text-nowrap fw-medium"
             >Municipio:</label
           >
           <select
@@ -195,51 +234,86 @@
           </select>
         </div>
       </div>
+      <!-- Bloque Contraseña y Repetir Contraseña con labels a la izquierda -->
+      <div class="row g-3 justify-content-center mt-2">
+        <div class="col-md-3 d-flex align-items-center">
+          <label
+            for="contrasena"
+            class="form-label mb-0 fw-medium text-nowrap me-2 align-middle"
+            >Contraseña:</label
+          >
+          <input
+            type="password"
+            name="contrasena"
+            id="contrasena"
+            class="form-control"
+            :disabled="admin && nuevoCliente.dni !== userDni && editando"
+            v-model="nuevoCliente.password"
+            required
+          />
+        </div>
 
-      <!-- Aviso Legal -->
-      <div class="text-center">
+        <div class="col-md-3 d-flex align-items-center ms-5">
+          <label
+            for="repeat-contrasena"
+            class="form-label mb-0 fw-medium text-nowrap me-2 align-middle"
+            >Repetir Contraseña:</label
+          >
+          <input
+            type="password"
+            name="repeat-contrasena"
+            id="repeat-contrasena"
+            class="form-control"
+            @blur="validarPasswords"
+            :class="{ 'is-invalid': !passwordsIguales }"
+            :disabled="admin && nuevoCliente.dni !== userDni && editando"
+            v-model="nuevoCliente.password2"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Botón centrado y checkbox al final -->
+      <div class="d-flex justify-content-end align-items-center mt-3">
+        <div class="form-check form-switch me-3" v-if="admin">
+          <input
+            type="checkbox"
+            id="historico"
+            v-model="mostrarHistorico"
+            class="form-check-input"
+            @change="cargarClientes"
+          />
+          <label for="historico" class="form-check-label ms-2">Histórico</label>
+        </div>
+      </div>
+      <div class="text-center mb-3">
         <input
           type="checkbox"
           id="avisolegal"
-          v-model="avisoLegal"
+          v-model="nuevoCliente.lopd"
           class="form-check-input"
         />
-        <span class="form-check-label ms-3 me-5 mb-0">
-          Aceptar terminos y condiciones:
-          <router-link to="/avisolegal" target="_blank"
-            >Aviso Legal</router-link
-          >
+        <span class="form-check-label mb-0">
+          Aceptar términos y condiciones:
+          <router-link to="/avisolegal">Aviso Legal</router-link>
         </span>
       </div>
-      <!-- Histórico -->
-      <!-- Checkbox al final -->
-      <div class="form-check form-switch ms-3">
-        <input
-          type="checkbox"
-          id="historico"
-          v-model="mostrarHistorico"
-          class="form-check-input"
-          @change="cargarClientes"
-        />
-        <label for="historico" class="form-check-label ms-2">Histórico</label>
-      </div>
 
-      <!-- Botón centrado -->
       <div class="text-center">
         <button
           type="submit"
-          :disabled="!avisoLegal"
-          class="btn btn-primary px-4"
+          class="btn btn-primary border-0 shadow-none rounded"
+          :disabled="!nuevoCliente.lopd"
         >
-          {{ editando ? "Modificar" : "Guardar" }}
+          {{ editando ? "Modificar Cliente" : "Guardar Cliente" }}
         </button>
       </div>
     </form>
     <!-- Lista de Clientes -->
-    <div class="table-responsive">
+    <div class="table-responsive" v-if="admin && clientes.length > 0">
       <h4 class="text-center w-100">Listado Clientes</h4>
       <table
-        class="table table-bordered table-striped table-hover table-sm w-100 align-middle"
+        class="table table-bordered table-striped table-hover table-sm align-middle"
       >
         <thead class="table-primary">
           <tr>
@@ -252,8 +326,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(cliente, index) in clientesPaginados" :key="index">
-            <th scope="row" class="text-center">{{ index + 1 }}</th>
+          <tr
+            v-for="(cliente, index) in clientesPaginados"
+            :key="cliente.id || index"
+          >
+            <th scope="row" class="text-center">
+              {{ (currentPage - 1) * clientesPorPage + index + 1 }}
+            </th>
             <td>{{ cliente.apellidos }}</td>
             <td>{{ cliente.nombre }}</td>
             <td class="text-center">{{ cliente.movil }}</td>
@@ -261,67 +340,72 @@
             <td class="align-middle text-center">
               <button
                 @click="eliminarCliente(cliente.movil)"
-                class="btn btn-danger btn-sm border-0 ms-4 me-2 shadow-none rounded-0"
+                class="btn btn-danger btn-sm border-0 ms-4 me-2 shadow-none rounded"
+                title="Eliminar cliente"
+                arial-label="Eliminar cliente"
               >
                 <i class="bi bi-trash"></i>
               </button>
               <button
                 @click="editarCliente(cliente.movil)"
-                class="btn btn-warning btn-sm border-0 shadow-none rounded-0"
-                title="Editar Cliente"
+                class="btn btn-warning btn-sm border-0 dow-none rounded"
+                title="Editar cliente"
+                aria-label="Editar cliente"
               >
                 <i class="bi bi-pencil"></i>
               </button>
               <button
                 v-if="cliente.historico === false"
                 @click="activarCliente(cliente)"
-                class="btn btn-secondary btn-sm ms-2 border-0 shadow-none rounded-0"
-                title="Activar Cliente"
+                class="btn btn-secondary btn-sm ms-2 border-0 shadow-none rounded"
+                title="Activar cliente"
               >
-                <i class="bi bi-person-check"></i>
+                <i class="bi bi-unlock"></i>
               </button>
             </td>
           </tr>
         </tbody>
       </table>
-      <!-- Navegación de página-->
-      <div class="d-flex justify-content-center my-3">
-        <button
-          class="btn btn-outline-primary btn-sm me-2 rounded-0 border-1 shadow-none"
-          @click="beforePagina"
-          :disabled="currentPage <= 1"
-        >
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        <span class="mx-3 align-self-center text-muted"
-          >Página {{ currentPage }}</span
-        >
-        <button
-          class="btn btn-outline-primary btn-sm rounded-0 border-1 shadow-none"
-          @click="nextPagina"
-          :disabled="currentPage >= totalPages"
-        >
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
+    </div>
+    <!-- Navegación de página-->
+    <div
+      class="d-flex justify-content-center my-3"
+      v-if="admin && clientes.length > 5"
+    >
+      <button
+        class="btn btn-outline-primary btn-sm me-2 rounded-0 border-1 shadow-none"
+        @click="beforePagina"
+        :disabled="currentPage <= 1"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <span class="mx-3 align-self-center text-muted"
+        >Página {{ currentPage }}</span
+      >
+      <button
+        class="btn btn-outline-primary btn-sm rounded-0 border-1 shadow-none"
+        @click="nextPagina"
+        :disabled="currentPage >= totalPages"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
   </div>
 </template>
-
 <script setup>
 import provmuniData from "@/data/provmuni.json";
 import { ref, onMounted, computed } from "vue";
 import {
   getClientes,
-  deleteCliente,
   addCliente,
+  deleteCliente,
   updateCliente,
   getClientePorDni,
 } from "@/api/clientes.js";
 import Swal from "sweetalert2";
-import AvisoLegal from "./AvisoLegal.vue";
+import bcrypt from "bcryptjs";
 
-// SCRIPTS CRUD //
+//////////////////// SCRIPTS CRUD ///////////////////////
 
 const nuevoCliente = ref({
   dni: "",
@@ -332,34 +416,43 @@ const nuevoCliente = ref({
   direccion: "",
   provincia: "",
   municipio: "",
-  fechaAlta: "",
-  historico: false, // luego lo cambiamos a true
-  lopd: false, // aceptación del aviso legal (L.O.P.D.)
+  fecha_alta: "",
+  tipoCliente: "",
+  historico: true,
+  lopd: false,
+  tipo: "user",
+  password: "",
 });
 
-// Funcion lisar clientes con get
+//////////// Declaraciones de estado o variables reactivas
+const passwordsIguales = ref(true);
+const editando = ref(false); // Estado de edición para el formulario para usar el mismo boton
+const clienteEditandoId = ref(null); //
 
-const editando = ref(false); // Estado de edición
-const clienteEditandoId = ref(null); // ID del cliente que se está editando
-const mostrarHistorico = ref(false);
-// Controla si el usuario ha aceptado el Aviso Legal. Hasta que no sea true,
-// la mayoría de campos y acciones estarán deshabilitados.
-const avisoLegal = ref(false);
+const mostrarHistorico = ref(false); //Estado del checkbox
+
+//Función listar clientes con get
 const clientes = ref([]);
+const userDni = ref("");
+const numclientes = ref(0); // Número total de clientes
+const currentPage = ref(1); // Página actual
+const clientesPorPage = 10; // Número de clientes por página
 
-const numClientes = ref(0);
-const currentPage = ref(1);
-const clientesPorPage = 10; // por defecto seria ref(10) y asi con 20 y 30 que sea un boton de checkbox
-// Cargar clientes al montar el componente
+const admin = sessionStorage.getItem("isAdmin") === "true";
+const isLogueado = sessionStorage.getItem("isLogueado") === "true";
+/////////// zona CargarClientes
 
 // Zona Cargar clientes Al Montar el componente
 onMounted(async () => {
-  cargarClientes();
-  currentPage.value = 1;
-});
-///avanzar y retroceder
+  userDni.value = sessionStorage.getItem("userDni");
+  await cargarClientes();
+  currentPage.value = 1; // Iniciar en la primera página
 
-// Métodos de paginación
+  if (isLogueado && !admin) {
+    await buscarClientePorDNI(userDni.value);
+  }
+});
+
 const beforePagina = () => {
   if (currentPage.value > 1) {
     currentPage.value--;
@@ -367,52 +460,57 @@ const beforePagina = () => {
 };
 
 const nextPagina = () => {
-  const totalPages = Math.ceil(numClientes.value / clientesPorPage);
-  //redondear hacia arriba para mostrar la última página aunque no esté completa
+  const totalPages = Math.ceil(numclientes.value / clientesPorPage); //redondear hacia arriba para mostrar la última página aunque no esté completa
   if (currentPage.value < totalPages) {
     currentPage.value++;
   }
 };
 
-// Propiedad computada para obtener los clientes en la página actual
-// computed crea una propiedad reactiva que se actualiza automáticamente
-// cuando cambian las dependencias (currentPage o clientes)
+// Propiedad computada para obtener los clientes de la página actual
+// computed crea una propiedad que se actualiza automáticamente
+//cuando cambian las dependencias (CurrentPage o clientes)
 // es decir paso pagina o vuelvo atrás cargando los clientes de esa página
-// slice extrae una sección del array clientes
-// start es el índice inicial y end el índice final (no incluido)
-
+//slice extrae una sección del array clientes
+//start es el índice inicial y end el índice final (no incluido)
 const clientesPaginados = computed(() => {
   const start = (currentPage.value - 1) * clientesPorPage;
   const end = start + clientesPorPage;
   return clientes.value.slice(start, end);
 });
 
-const cargarClientes = () => {
+const cargarClientes = async () => {
   getClientes(mostrarHistorico.value).then((data) => {
     clientes.value = data;
-    numClientes.value = data.length; // ✅ actualizar total de clientes
+    numclientes.value = data.length; //Actualiza el numero total de clientes
+    currentPage.value = 1; // Reiniciar a la primera págiona al cargar
   });
   Swal.fire({
     icon: "success",
-    title: "Listando Clientes",
+    title: "Listando Clientes...",
     showConfirmButton: false,
     timer: 1500,
   });
 };
 
+/////// GUARDAR CLIENTE COMPLETO
 const guardarCliente = async () => {
-  // Antes de guardar, el usuario debe haber aceptado el Aviso Legal
-  if (!avisoLegal.value) {
+  if (!passwordsIguales.value) {
     Swal.fire({
-      icon: "warning",
-      title: "Debes aceptar el Aviso Legal antes de guardar",
+      icon: "error",
+      title: "Las contraseñas deben coincidir",
       showConfirmButton: false,
       timer: 2000,
     });
     return;
   }
-  // Validar duplicados solo si estás creando (no si editando)
+  // Requerir aceptación de términos antes de guardar o modificar
+  if (nuevoCliente.value.fecha_alta.includes("/")) {
+    nuevoCliente.value.fecha_alta = formatearFechaParaInput(
+      nuevoCliente.value.fecha_alta
+    );
+  }
 
+  // Validar duplicados solo si estás creando (no si editando)
   if (!editando.value) {
     const duplicado = clientes.value.find(
       (cliente) =>
@@ -438,25 +536,23 @@ const guardarCliente = async () => {
       : "¿Desea grabar este cliente?",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: editando.value ? "Modificar" : "Guardar",
+    confirmButtonText: editando.value ? "Modificar" : "Grabar",
     cancelButtonText: "Cancelar",
   });
 
   if (!result.isConfirmed) return;
-  //  cliente.fechaAlta = formatearFechaParaInput(cliente.fechaAlta);
+
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(nuevoCliente.value.password, salt);
+  nuevoCliente.value.password = hash;
+  delete nuevoCliente.value.password2;
   try {
     if (editando.value) {
-      // Validar campos
-      // Modificar cliente (PUT)+
-
-      // Asegurarnos de guardar el estado de aceptación LOPD según el checkbox
-      nuevoCliente.value.lopd = avisoLegal.value;
-
+      // Modificar cliente (PUT)
       const clienteActualizado = await updateCliente(
         clienteEditandoId.value,
         nuevoCliente.value
       );
-
       // Actualiza el cliente en la lista local
       const index = clientes.value.findIndex(
         (c) => c.id === clienteEditandoId.value
@@ -470,10 +566,6 @@ const guardarCliente = async () => {
       });
     } else {
       // Agregar cliente (POST)
-
-      // Asegurarnos de guardar el estado de aceptación LOPD según el checkbox
-      nuevoCliente.value.lopd = avisoLegal.value;
-
       const clienteAgregado = await addCliente(nuevoCliente.value);
       clientes.value.push(clienteAgregado);
       Swal.fire({
@@ -494,20 +586,26 @@ const guardarCliente = async () => {
       direccion: "",
       provincia: "",
       municipio: "",
-      fechaAlta: "",
+      fecha_alta: "",
+      tipoCliente: "",
       historico: true,
       lopd: false,
+      tipo: "user",
+      password: "",
+      password2: "",
     };
-    editando.value = true;
+
+    editando.value = false;
     clienteEditandoId.value = null;
 
     // Reset validaciones si tienes (dniValido, movilValido, etc)
     dniValido.value = true;
     movilValido.value = true;
     emailValido.value = true;
-
+    passwordsIguales.value = true;
+    window.location.reload();
     // Refrescar lista completa (opcional)
-    clientes.value = await getClientes();
+    clientes.value = await getClientes(mostrarHistorico.value);
   } catch (error) {
     console.error("Error al guardar cliente:", error);
     Swal.fire({
@@ -520,7 +618,104 @@ const guardarCliente = async () => {
   }
 };
 
-// Función para activar cliente (poner historico en true)
+/* Zona Cargar clientes Al Montar el componente ///////////////
+onMounted(async () => {
+  guardarCliente();
+});
+*/
+
+function validarPasswords() {
+  if (nuevoCliente.value.password != nuevoCliente.value.password2) {
+    passwordsIguales.value = false;
+  } else {
+    passwordsIguales.value = true;
+  }
+}
+
+// Funcion Eliminar Cliente con patch (histórico a false)
+const eliminarCliente = async (movil) => {
+  // Refrescar lista desde la API
+  clientes.value = await getClientes(mostrarHistorico.value);
+  // Buscar cliente completo (que incluye el ID)
+  const clienteAEliminar = clientes.value.find(
+    (cliente) => cliente.movil === movil
+  );
+
+  if (!clienteAEliminar) {
+    Swal.fire({
+      icon: "error",
+      title: "Cliente no encontrado",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+  if (!clienteAEliminar.historico) {
+    Swal.fire({
+      icon: "error",
+      title: "Cliente ya dado de Baja",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+  // Pedir confirmación antes de eliminar
+  const result = await Swal.fire({
+    title: `¿Eliminar al cliente ${clienteAEliminar.nombre} ${clienteAEliminar.apellidos}?`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  });
+
+  // Si no confirma, salir
+  if (!result.isConfirmed) return;
+
+  // Si confirma, eliminar cliente usando la API y movil como ID
+  await deleteCliente(clienteAEliminar.id);
+  // Refrescar la lista desde la "API"
+  clientes.value = await getClientes(mostrarHistorico.value);
+
+  Swal.fire({
+    icon: "success",
+    title: "Cliente eliminado",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
+
+/* Cargar clientes al montar el componente /////////////////////////*/
+
+// Función Editar Cliente (carga datos en el formulario)
+const editarCliente = (movil) => {
+  const cliente = clientes.value.find((c) => c.movil === movil);
+  if (!cliente) {
+    Swal.fire({
+      icon: "error",
+      title: "Cliente no encontrado",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+  // Detectar si fecha ya está en ISO o no, y convertir solo si es necesario
+  let fechaFormateada = cliente.fecha_alta;
+  if (fechaFormateada && fechaFormateada.includes("/")) {
+    fechaFormateada = formatearFechaParaInput(fechaFormateada);
+  }
+
+  nuevoCliente.value = { ...cliente, fecha_alta: fechaFormateada }; //Cargamos todos los datos del cliente
+  nuevoCliente.value.lopd = cliente.lopd; //Para que tenga que coja tambien su valor de lopd
+
+  nuevoCliente.value.password = "";
+  nuevoCliente.value.password2 = "";
+  editando.value = true;
+  filtrarMunicipios();
+  nuevoCliente.value.municipio = cliente.municipio;
+  clienteEditandoId.value = cliente.id;
+};
+
+///////////////Función para activar cliente (poner historico en true)
 const activarCliente = async (cliente) => {
   const confirmacion = await Swal.fire({
     title: `¿Activar cliente ${cliente.nombre} ${cliente.apellidos}?`,
@@ -553,7 +748,7 @@ const activarCliente = async (cliente) => {
     });
 
     // Recargar lista actualizada
-    cargarClientes();
+    await cargarClientes();
   } catch (error) {
     console.error("Error al reactivar cliente:", error);
     Swal.fire({
@@ -563,92 +758,6 @@ const activarCliente = async (cliente) => {
       timer: 1500,
     });
   }
-};
-
-const agregarCliente = () => {
-  clientes.value.push({ ...nuevoCliente.value });
-  // Reiniciar el formulario
-  nuevoCliente.value = {
-    dni: "",
-    nombre: "",
-    apellidos: "",
-    email: "",
-    movil: "",
-    direccion: "",
-    provincia: "",
-    municipio: "",
-    fechaAlta: "",
-    historico: false,
-  };
-};
-
-// Funcion Eliminar Cliente con patch (histórico a false)
-const eliminarCliente = async (movil) => {
-  // Refrescar lista desde la API
-
-  clientes.value = await getClientes();
-  // Buscar cliente completo (que incluye el ID)
-  const clienteAEliminar = clientes.value.find(
-    (cliente) => cliente.movil === movil
-  );
-
-  if (!clienteAEliminar) {
-    Swal.fire({
-      icon: "error",
-      title: "Cliente no encontrado",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    return;
-  }
-
-  // Pedir confirmación antes de eliminar
-  const result = await Swal.fire({
-    title: `¿Eliminar al cliente ${clienteAEliminar.nombre} ${clienteAEliminar.apellidos}?`,
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar",
-  });
-
-  // Si no confirma, salir
-  if (!result.isConfirmed) return;
-
-  // Si confirma, eliminar cliente usando la API y movil como ID
-  await deleteCliente(clienteAEliminar.id);
-  // Refrescar la lista desde la "API"
-  clientes.value = await getClientes();
-
-  Swal.fire({
-    icon: "success",
-    title: "Cliente eliminado",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-};
-// añadir que cuando editamos editamos a un usuario no se pueda editar el dni
-// Función Editar Cliente (carga datos en el formulario)
-const editarCliente = (movil) => {
-  const cliente = clientes.value.find((c) => c.movil === movil);
-  if (!cliente) {
-    Swal.fire({
-      icon: "error",
-      title: "Cliente no encontrado",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    return;
-  }
-
-  // Copiar datos al formulario
-  nuevoCliente.value = { ...cliente }; // 🔁 Aquí cargas el formulario con los datos
-  editando.value = true;
-  // Formatear fecha para el input type="date"
-  nuevoCliente.value.fechaAlta = formatearFechaParaInput(cliente.fechaAlta);
-  // Actualiza municipios filtrados según la provincia seleccionada
-  filtrarMunicipios();
-  nuevoCliente.value.municipio = cliente.municipio; // 🟢 Ahora estamos en modo edición
-  clienteEditandoId.value = cliente.id;
 };
 
 ///CODIGO BUSQUEDA COMPONENTES
@@ -666,7 +775,7 @@ const buscarClientePorDNI = async (dni) => {
 
   try {
     const cliente = await getClientePorDni(dni.trim().toUpperCase());
-
+    console.log(cliente.value);
     if (!cliente) {
       Swal.fire({
         icon: "info",
@@ -680,13 +789,17 @@ const buscarClientePorDNI = async (dni) => {
 
     // ✅ Cargar los datos en el formulario
     nuevoCliente.value = { ...cliente };
-    nuevoCliente.value.fechaAlta = formatearFechaParaInput(cliente.fechaAlta);
+    nuevoCliente.value.fecha_alta = formatearFechaParaInput(cliente.fecha_alta);
+    nuevoCliente.value.lopd = cliente.lopd; //Para que tenga que coja tambien su valor de lopd
+    nuevoCliente.value.password = "";
+    nuevoCliente.value.password2 = "";
+    editando.value = true;
 
     // Actualiza lista de municipios si cambia la provincia
     filtrarMunicipios();
     //opcional
-    editando.value = true;
     clienteEditandoId.value = cliente.id;
+    nuevoCliente.value.municipio = cliente.municipio;
 
     Swal.fire({
       icon: "success",
@@ -705,10 +818,45 @@ const buscarClientePorDNI = async (dni) => {
     });
   }
 };
-// SCRIPS AUXILIARES
+
+const capitalizarTexto = (propiedad) => {
+  if (!nuevoCliente.value[propiedad]) return;
+  nuevoCliente.value[propiedad] = nuevoCliente.value[propiedad]
+    .split(" ")
+    .map(
+      (palabra) =>
+        palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()
+    )
+    .join(" ");
+};
+
+/////////////////////SCRIPTS AUXILIARES /////////////////////////////////
+const dniValido = ref(true); // Por defecto es válido y no muestra error al iniciar
+const emailValido = ref(true);
+
+// conversor fecha
+const formatearFechaParaInput = (fecha) => {
+  if (!fecha) return "";
+  const partes = fecha.split("-");
+  if (partes.length !== 3) return "";
+  // partes = [dd, mm, yyyy]
+  return `${partes[0]}-${partes[1].padStart(2, "0")}-${partes[2].padStart(
+    2,
+    "0"
+  )}`;
+};
+
+///// VALIDACIONES
+
+//Validar email
+const validarEmail = () => {
+  const email = nuevoCliente.value.email.trim();
+  // Expresión simple para email válido
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  emailValido.value = regex.test(email);
+};
 
 // Estado de validez del DNI/NIE si la estructura de datos es más compleja se usa reactive
-const dniValido = ref(true); // Por defecto es válido y no muestra error al iniciar
 
 // Función para validar DNI y NIE
 const validarDniNie = (valor) => {
@@ -731,27 +879,59 @@ const validarDniNie = (valor) => {
   return false;
 };
 
-// Función única: capitaliza y asigna en el mismo paso
-const capitalizarTexto = (campo) => {
-  const texto = nuevoCliente.value[campo] ?? "";
-  nuevoCliente.value[campo] = texto
-    .toLowerCase()
-    .split(" ")
-    .map((palabra) => {
-      if (!palabra) return "";
-      return palabra.charAt(0).toLocaleUpperCase() + palabra.slice(1);
-    })
-    .join(" ");
+// Validar al salir del campo
+const validarDni = () => {
+  nuevoCliente.value.dni = nuevoCliente.value.dni.trim().toUpperCase();
+  dniValido.value = validarDniNie(nuevoCliente.value.dni);
 };
 
-// control email
+// Control móvil
+const movilValido = ref(true);
+const movilRegex = /^[67]\d{8}$/;
 
-const emailValido = ref(true);
-const validarEmail = () => {
-  const email = nuevoCliente.value.email.trim();
-  // Expresión simple para email válido
-  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  emailValido.value = regex.test(email);
+const validarMovil = () => {
+  const movil = nuevoCliente.value.movil.trim();
+
+  if (movil === "") {
+    movilValido.value = true; // Vacío = válido (opcional)
+    return true;
+  }
+
+  if (movil.charAt(0) === "6" || movil.charAt(0) === "7") {
+    movilValido.value = movilRegex.test(movil);
+    return movilValido.value;
+  } else {
+    movilValido.value = false;
+    return false;
+  }
+};
+
+// Función para resetear el formulario
+const resetForm = () => {
+  // Reiniciar el formulario
+  nuevoCliente.value = {
+    dni: "",
+    nombre: "",
+    apellidos: "",
+    email: "",
+    movil: "",
+    direccion: "",
+    provincia: "",
+    municipio: "",
+    fecha_alta: "",
+    historico: true,
+    tipo: "user",
+    password: "",
+    password2: "",
+  };
+  // Resetear estado de edición
+  editando.value = false;
+  clienteEditandoId.value = null;
+  // Resetear validaciones
+  dniValido.value = true;
+  movilValido.value = true;
+  emailValido.value = true;
+  // Resetear aceptación de términos
 };
 
 // Provincias y municipios
@@ -782,50 +962,9 @@ const filtrarMunicipios = () => {
   // 4️⃣ opcional: resetear el municipio si ya no corresponde
   nuevoCliente.value.municipio = "";
 };
-
-const movilValido = ref(true);
-// Validar al salir del campo
-const validarDni = () => {
-  nuevoCliente.value.dni = nuevoCliente.value.dni.trim().toUpperCase();
-  dniValido.value = validarDniNie(dni);
-};
-
-const validarMovil = () => {
-  const movil = nuevoCliente.value.movil.trim();
-  // Expresión para móvil español (9 dígitos, empieza por 6, 7, 8 o 9)
-  const regex = /^[6789]\d{8}$/;
-  movilValido.value = regex.test(movil) || movil === "";
-};
-
-// conversor fecha
-function formatearFechaParaInput(fecha) {
-  if (!fecha) return "";
-
-  // Detecta formato dd/mm/yyyy
-  if (fecha.includes("/")) {
-    const [dd, mm, yyyy] = fecha.split("/");
-    return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-  }
-
-  // Detecta formato yyyy-mm-dd
-  if (fecha.includes("-")) {
-    const partes = fecha.split("-");
-    if (partes.length === 3) return fecha; // ya formato ISO
-  }
-  return "";
-}
 </script>
 
 <style scoped>
-.is-invalid {
-  border-color: #f28b82 !important;
-  background-color: #ffe6e6;
-}
-
-.invalid-feedback {
-  display: block;
-}
-
 .gestion-clientes {
   width: 95%;
   max-width: none;
@@ -835,20 +974,5 @@ function formatearFechaParaInput(fecha) {
 
 .form-control {
   width: 100%;
-}
-
-.gestion-header {
-  /* Ocupa todo el ancho del contenedor */
-  display: block;
-  width: 100%;
-  box-sizing: border-box;
-  margin: 0 0 0.5rem 0;
-  padding: 0.75rem 1rem;
-  border-radius: 6px 6px 6px 6px; /* opcional: redondeo en los bordes superiores */
-
-  background-color: #b5caff;
-  color: #03306b;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  font-weight: 600;
 }
 </style>

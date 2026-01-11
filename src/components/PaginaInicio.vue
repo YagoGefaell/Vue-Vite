@@ -14,7 +14,7 @@
     <h1 class="display-3 fw-bold text-light mb-3 text-center">Bienvenido a Teis Motor</h1>
     <p class="lead text-light text-center mb-4">Innovación, potencia y diseño en cada detalle</p>
     <div class="d-flex justify-content-center gap-3">
-      <router-link to="/clientes" class="btn btn-primary btn-lg shadow">
+      <router-link to="/ventas" class="btn btn-primary btn-lg shadow">
         Ver Catálogo
       </router-link>
       <router-link to="/contacto" class="btn btn-outline-light btn-lg shadow">

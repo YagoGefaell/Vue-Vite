@@ -5,6 +5,7 @@ import path from "path";
 import Articulo from "../modelos/Articulo.js";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { verificarToken, soloAdmin } from "./authController.js";
 
 // inicializar configuración de multer para manejo de archivos
 const __filename = fileURLToPath(import.meta.url);
@@ -24,10 +25,12 @@ console.log("Router articulos cargado"); // para depurar
 // Configuración de almacenamiento de multer en la carpeta uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    //el callback es la respuesta que da el multer al mandar la ruta, si es correcto en este caso devuelve null
     cb(null, path.join(__dirname, "uploads")); // ruta absoluta a server/uploads
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    //el callback es la respuesta que da el multer al mandar el archivo, si es correcto en este caso devuelve null
+    cb(null, Date.now() + path.extname(file.originalname)); //El nombre del archivo será la fecha actual completa y mantendrá la extensión del archivo que reviba
   },
 });
 
@@ -36,41 +39,50 @@ const upload = multer({ storage: storage });
 
 // AHORA VIENEN LAS RUTAS USANDO EL router DE EXPRESS
 // Obtener todos los artículo
-router.get("/", async (req, res) => {
+router.get("/", verificarToken, async (req, res) => {
   const articulos = await Articulo.find();
   res.json(articulos);
 });
 
-// Guardar artículo con imagen
-router.post("/", upload.single("imagen"), async (req, res) => {
-  try {
-    if (!req.body.vehiculo) {
-      console.error("No se recibió el campo 'vehiculo'");
-      return res.status(400).json({ error: "Campo 'vehiculo' vacío" });
-    }
-
-    let datos;
+// Esto recibe los datos del post de la api al enviar datos a localhost 5000 api articulos(asociado en el server), y se encarga de almacenar la imagen en uploads y en subirlo a mongodb
+router.post(
+  "/",
+  verificarToken,
+  soloAdmin,
+  upload.single("imagen"),
+  async (req, res) => {
     try {
-      datos = JSON.parse(req.body.vehiculo);
-    } catch (e) {
-      console.error("Error parseando JSON:", e.message);
-      return res
-        .status(400)
-        .json({ error: "JSON inválido en 'vehiculo'", detalle: e.message });
-    }
+      if (!req.body.vehiculo) {
+        console.error("No se recibió el campo 'vehiculo'");
+        return res.status(400).json({ error: "Campo 'vehiculo' vacío" });
+      }
 
-    if (req.file) {
-      datos.imagen = `/uploads/${req.file.filename}`;
-    }
+      let datos;
+      try {
+        //Datos coge la estructura json con los datos del body
+        datos = JSON.parse(req.body.vehiculo);
+      } catch (e) {
+        console.error("Error parseando JSON:", e.message);
+        return res
+          .status(400)
+          .json({ error: "JSON inválido en 'vehiculo'", detalle: e.message });
+      }
 
-    const articulo = new Articulo(datos);
-    const guardado = await articulo.save();
-    res.json(guardado);
-  } catch (err) {
-    console.error("Error guardando artículo:", err);
-    res.status(500).json({ error: err.message, stack: err.stack });
+      if (req.file) {
+        //El filename es el descrito cuando hacemos el storage y marcamos el filename
+        //Aqui añadimos un atributo mas al json datos con el nombre imagen y el valor dado
+        datos.imagen = `/uploads/${req.file.filename}`;
+      }
+
+      const articulo = new Articulo(datos);
+      const guardado = await articulo.save();
+      res.json(guardado);
+    } catch (err) {
+      console.error("Error guardando artículo:", err);
+      res.status(500).json({ error: err.message, stack: err.stack });
+    }
   }
-});
+);
 
 // otras rutas PUT, DELETE, GET /:id igual
 

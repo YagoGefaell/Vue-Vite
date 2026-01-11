@@ -1,40 +1,36 @@
 // authApi.js
 import axios from "axios";
 
-// Función que llama al backend para login usando JWT real
+// Función que llama al backend para login usando JWT real, lo envia al fichero del server correspondiente, mandandole solo el dato del dni y la password
 export const loginUsuario = async (dni, password) => {
   try {
     const response = await axios.post("http://localhost:5000/api/auth/login", {
       dni,
       password,
     });
-    return response.data; // { token, nombre, tipo }
+    return response.data; // { token, nombre, tipo }(lo que devuelve lo veremos en el fichero del server)
   } catch (error) {
     console.error("Error en loginUsuario:", error);
     throw error;
   }
 };
 
-// Función que verifica si el usuario es admin mediante el token
-export const checkAdmin = async () => {
+export async function esAdmin() {
   try {
     const token = sessionStorage.getItem("token");
-    if (!token) return { isAdmin: false };
-
+    if (!token) return false;
     const response = await axios.get(
       "http://localhost:5000/api/auth/check-admin",
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       }
     );
-    return response.data; // { isAdmin, tipo, dni }
+    return response.data.admin;
   } catch (error) {
-    console.error("Error en checkAdmin:", error);
-    return { isAdmin: false };
+    console.error("Error en esAdmin", error);
+    return false;
   }
-};
+}
 
 //////////// PORQUE ESTE FICHERO Y NO LLAMAR DIRECTAMENTE A authController.js desde el frontend?
 

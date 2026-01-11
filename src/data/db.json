@@ -2,7 +2,7 @@
   "clientes": [
     {
       "dni": "73289465B",
-      "fechaAlta": "2022-02-14",
+      "fecha_alta": "14/02/2022",
       "nombre": "Laura",
       "apellidos": "López Sánchez",
       "email": "laura.lopez@example.com",
@@ -11,13 +11,15 @@
       "provincia": "Madrid",
       "municipio": "Alcalá de Henares",
       "historico": false,
+      "tipoCliente": "empresa",
       "lopd": true,
       "password": "",
-      "id": "e144"
+      "id": "eec1",
+      "tipo": "user"
     },
     {
       "dni": "X3456789G",
-      "fechaAlta": "2023-07-05",
+      "fecha_alta": "2025-11-12",
       "nombre": "José",
       "apellidos": "Martín Pérez",
       "email": "jose.martin@example.com",
@@ -26,13 +28,15 @@
       "provincia": "Barcelona",
       "municipio": "Badalona",
       "historico": true,
-      "lopd": false,
+      "tipoCliente": "empresa",
+      "lopd": true,
       "password": "",
-      "id": "b248"
+      "id": "5d34",
+      "tipo": "user"
     },
     {
       "dni": "45678912S",
-      "fechaAlta": "2021-11-20",
+      "fecha_alta": "2025-11-30",
       "nombre": "Ana",
       "apellidos": "García Gómez",
       "email": "ana.garcia@example.com",
@@ -41,13 +45,15 @@
       "provincia": "Sevilla",
       "municipio": "Utrera",
       "historico": false,
+      "tipoCliente": "empresa",
       "lopd": true,
       "password": "",
-      "id": "67c5"
+      "id": "24ea",
+      "tipo": "user"
     },
     {
       "dni": "78912345N",
-      "fechaAlta": "2024-03-08",
+      "fecha_alta": "08/03/2024",
       "nombre": "Antonio",
       "apellidos": "Pérez López",
       "email": "antonio.perez@example.com",
@@ -56,13 +62,15 @@
       "provincia": "Valencia",
       "municipio": "Torrent",
       "historico": true,
+      "tipoCliente": "particular",
       "lopd": true,
       "password": "",
-      "id": "545d"
+      "id": "7e6b",
+      "tipo": "user"
     },
     {
       "dni": "90123456A",
-      "fechaAlta": "2022-06-27",
+      "fecha_alta": "2014-12-10",
       "nombre": "María",
       "apellidos": "Fernández Martín",
       "email": "maria.fernandez@example.com",
@@ -71,13 +79,15 @@
       "provincia": "Málaga",
       "municipio": "Ronda",
       "historico": false,
-      "lopd": false,
+      "tipoCliente": "empresa",
+      "lopd": true,
       "password": "",
-      "id": "a890"
+      "id": "fc34",
+      "tipo": "user"
     },
     {
       "dni": "Z2345678M",
-      "fechaAlta": "2023-04-15",
+      "fecha_alta": "2025-11-21",
       "nombre": "Javier",
       "apellidos": "Sánchez García",
       "email": "javier.sanchez@example.com",
@@ -86,13 +96,15 @@
       "provincia": "Zaragoza",
       "municipio": "Calatayud",
       "historico": true,
-      "lopd": false,
+      "tipoCliente": "empresa",
+      "lopd": true,
       "password": "",
-      "id": "dcb0"
+      "id": "41cd",
+      "tipo": "user"
     },
     {
       "dni": "34567891H",
-      "fechaAlta": "2021-09-09",
+      "fecha_alta": "09/09/2021",
       "nombre": "Carmen",
       "apellidos": "Rodríguez Martínez",
       "email": "carmen.rodriguez@example.com",
@@ -101,13 +113,15 @@
       "provincia": "Murcia",
       "municipio": "Cartagena",
       "historico": false,
+      "tipoCliente": "empresa",
       "lopd": true,
       "password": "",
-      "id": "e0f5"
+      "id": "a7dd",
+      "tipo": "user"
     },
     {
       "dni": "56789123F",
-      "fechaAlta": "2024-01-11",
+      "fecha_alta": "2025-11-22",
       "nombre": "Luis",
       "apellidos": "Martínez Fernández",
       "email": "luis.martinez@example.com",
@@ -116,28 +130,32 @@
       "provincia": "Granada",
       "municipio": "Motril",
       "historico": true,
+      "tipoCliente": "empresa",
       "lopd": true,
       "password": "",
-      "id": "4e60"
+      "id": "04c3",
+      "tipo": "user"
     },
     {
       "dni": "23456789D",
-      "fechaAlta": "2022-05-22",
+      "fecha_alta": "2025-11-30",
       "nombre": "Isabel",
       "apellidos": "Gómez López",
       "email": "isabel.gomez@example.com",
       "movil": "690123456",
       "direccion": "Calle Sánchez 80",
       "provincia": "Cádiz",
-      "municipio": "Chiclana",
+      "municipio": "Chiclana de la Frontera",
       "historico": false,
-      "lopd": false,
+      "lopd": true,
+      "tipoCliente": "empresa",
       "password": "",
-      "id": "7064"
+      "id": "287e",
+      "tipo": "user"
     },
     {
       "dni": "67891234H",
-      "fechaAlta": "2023-08-03",
+      "fecha_alta": "2025-12-05",
       "nombre": "Carlos",
       "apellidos": "Martín García",
       "email": "carlos.martin@example.com",
@@ -146,13 +164,15 @@
       "provincia": "Bizkaia",
       "municipio": "Getxo",
       "historico": true,
-      "lopd": false,
+      "tipoCliente": "empresa",
+      "lopd": true,
       "password": "",
-      "id": "f731"
+      "id": "0fb8",
+      "tipo": "user"
     },
     {
       "dni": "78945612K",
-      "fechaAlta": "2021-12-29",
+      "fecha_alta": "2025-11-29",
       "nombre": "Ana",
       "apellidos": "López Fernández",
       "email": "ana.lopez@example.com",
@@ -161,13 +181,15 @@
       "provincia": "Madrid",
       "municipio": "Getafe",
       "historico": false,
+      "tipoCliente": "particular",
       "lopd": true,
       "password": "",
-      "id": "5f13"
+      "id": "4043",
+      "tipo": "user"
     },
     {
       "dni": "X9876543K",
-      "fechaAlta": "2024-03-17",
+      "fecha_alta": "17/03/2024",
       "nombre": "Javier",
       "apellidos": "Sánchez Gómez",
       "email": "javier.sanchez@example.com",
@@ -176,13 +198,15 @@
       "provincia": "Barcelona",
       "municipio": "Terrassa",
       "historico": true,
+      "tipoCliente": "empresa",
       "lopd": false,
       "password": "",
-      "id": "b2d2"
+      "id": "8769",
+      "tipo": "user"
     },
     {
       "dni": "34561278Y",
-      "fechaAlta": "2022-06-05",
+      "fecha_alta": "05/06/2022",
       "nombre": "Luis",
       "apellidos": "Pérez Martínez",
       "email": "luis.perez@example.com",
@@ -192,12 +216,14 @@
       "municipio": "Écija",
       "historico": false,
       "lopd": true,
+      "tipoCliente": "particular",
       "password": "",
-      "id": "a0d3"
+      "id": "2fbe",
+      "tipo": "user"
     },
     {
       "dni": "Y1234567X",
-      "fechaAlta": "2023-09-21",
+      "fecha_alta": "2025-12-05",
       "nombre": "María",
       "apellidos": "Gómez Rodríguez",
       "email": "maria.gomez@example.com",
@@ -207,12 +233,14 @@
       "municipio": "Gandía",
       "historico": true,
       "lopd": true,
+      "tipoCliente": "empresa",
       "password": "",
-      "id": "d4cc"
+      "id": "2538",
+      "tipo": "user"
     },
     {
       "dni": "56712389R",
-      "fechaAlta": "2021-11-12",
+      "fecha_alta": "12/11/2021",
       "nombre": "Carlos",
       "apellidos": "Martín Sánchez",
       "email": "carlos.martin@example.com",
@@ -222,12 +250,14 @@
       "municipio": "Marbella",
       "historico": false,
       "lopd": false,
+      "tipoCliente": "particular",
       "password": "",
-      "id": "8449"
+      "id": "aec2",
+      "tipo": "user"
     },
     {
       "dni": "X4567891E",
-      "fechaAlta": "2022-01-14",
+      "fecha_alta": "2021-01-21",
       "nombre": "Ana",
       "apellidos": "Fernández López",
       "email": "ana.fernandez@example.com",
@@ -235,14 +265,16 @@
       "direccion": "Calle García 12",
       "provincia": "Madrid",
       "municipio": "Móstoles",
-      "historico": false,
+      "historico": true,
       "lopd": true,
+      "tipoCliente": "particular",
       "password": "",
-      "id": "66e1"
+      "id": "8d42",
+      "tipo": "user"
     },
     {
       "dni": "Y2345678Z",
-      "fechaAlta": "2023-03-09",
+      "fecha_alta": "2025-02-04",
       "nombre": "Carlos",
       "apellidos": "Martínez Sánchez",
       "email": "carlos.martinez@example.com",
@@ -251,13 +283,15 @@
       "provincia": "Barcelona",
       "municipio": "Sabadell",
       "historico": true,
-      "lopd": false,
+      "lopd": true,
+      "tipoCliente": "empresa",
       "password": "",
-      "id": "d42f"
+      "id": "d814",
+      "tipo": "user"
     },
     {
       "dni": "Z9876543A",
-      "fechaAlta": "2021-07-22",
+      "fecha_alta": "22/07/2021",
       "nombre": "José",
       "apellidos": "Pérez Gómez",
       "email": "jose.perez@example.com",
@@ -267,27 +301,31 @@
       "municipio": "Dos Hermanas",
       "historico": false,
       "lopd": true,
+      "tipoCliente": "particular",
       "password": "",
-      "id": "2871"
+      "id": "4a73",
+      "tipo": "user"
     },
     {
       "dni": "12345678Z",
-      "fechaAlta": "2022-09-30",
+      "fecha_alta": "2022-09-30",
       "nombre": "Laura",
       "apellidos": "Gómez Fernández",
       "email": "laura.gomez@example.com",
       "movil": "645678902",
       "direccion": "Calle Sánchez 18",
       "provincia": "Valencia",
-      "municipio": "Xàtiva",
-      "historico": false,
+      "municipio": "Torrella",
+      "historico": true,
       "lopd": true,
-      "password": "",
-      "id": "2eb2"
+      "tipoCliente": "particular",
+      "password": "$2b$10$0tUXiSPohRhKYcVrPmif2.Avjzl8D1qezzy4JwxKg1Ws.yqENV.cy",
+      "id": "5447",
+      "tipo": "user"
     },
     {
       "dni": "87654321X",
-      "fechaAlta": "2023-12-17",
+      "fecha_alta": "2018-02-25",
       "nombre": "Luis",
       "apellidos": "López Martín",
       "email": "luis.lopez@example.com",
@@ -296,13 +334,15 @@
       "provincia": "Málaga",
       "municipio": "Antequera",
       "historico": false,
-      "lopd": false,
+      "lopd": true,
+      "tipoCliente": "empresa",
       "password": "",
-      "id": "16a7"
+      "id": "4ef9",
+      "tipo": "user"
     },
     {
       "dni": "X3456789G",
-      "fechaAlta": "2024-05-05",
+      "fecha_alta": "2025-11-02",
       "nombre": "Isabel",
       "apellidos": "Martín Pérez",
       "email": "isabel.martin@example.com",
@@ -311,93 +351,163 @@
       "provincia": "Zaragoza",
       "municipio": "Ejea de los Caballeros",
       "historico": true,
-      "lopd": false,
+      "lopd": true,
+      "tipoCliente": "particular",
       "password": "",
-      "id": "a4c1"
+      "id": "3617",
+      "tipo": "user"
     },
     {
-      "id": "1504",
-      "dni": "35522308L",
-      "nombre": "Yago",
-      "apellidos": "Gefaell",
-      "email": "yaguetegpl@gmail.com",
-      "movil": "655555555",
-      "direccion": "Camiño Figueiras Nº29",
-      "provincia": "Pontevedra",
-      "municipio": "Vigo",
-      "fechaAlta": "2025-10-15",
-      "historico": false
+      "id": "f772",
+      "dni": "67048762X",
+      "nombre": "Piccolo",
+      "apellidos": "Fernández López",
+      "email": "piccolo@gmail.si",
+      "movil": "677769320",
+      "direccion": "Calle García 12",
+      "provincia": "Albacete",
+      "municipio": "Alatoz",
+      "tipoCliente": "particular",
+      "historico": false,
+      "fecha_alta": "2001-02-11",
+      "lopd": true,
+      "tipo": "user"
     },
     {
-      "id": "7c41",
-      "dni": "35522308L",
+      "id": "c839",
+      "dni": "54917735Z",
+      "nombre": "Hola",
+      "apellidos": "Balatrez",
+      "email": "goty@2024.si",
+      "movil": "666666666",
+      "direccion": "Full House",
+      "provincia": "Barcelona",
+      "municipio": "Ullastrell",
+      "fecha_alta": "2025-11-12",
+      "historico": true,
+      "tipoCliente": "empresa",
+      "lopd": true,
+      "password": "$2b$10$w9V3wUQPgd5fMOOsRIrTw.epiGqekVHDvZXLfqv11LmEYnc.xQV6K",
+      "tipo": "user"
+    },
+    {
+      "id": "bd20",
+      "dni": "35584308L",
       "nombre": "Yago",
-      "apellidos": "Gefaelll Pérez De Lis",
-      "email": "yaguetegpl@gmail.com",
-      "movil": "655555555",
-      "direccion": "Camiño Figueiras Nº29",
+      "apellidos": "Gefaell Pérez de Lis",
+      "email": "yagogefaell@gmail.com",
+      "movil": "605770084",
+      "direccion": "camiño vigo 21",
       "provincia": "Pontevedra",
-      "municipio": "",
-      "fechaAlta": "2025-10-15",
-      "historico": false
+      "municipio": "vigo",
+      "fecha_alta": "2025-11-28",
+      "tipoCliente": "particular",
+      "historico": true,
+      "lopd": true,
+      "password": "$2b$10$3nSimOYvzgvNPkTeWQktLeD9fblWSdC5FnisvGZoy2KRKi0uZgNDi",
+      "tipo": "user"
+    },
+    {
+      "id": "de4a",
+      "dni": "55555555K",
+      "nombre": "Administrador",
+      "apellidos": "Profe",
+      "email": "administrador@admin.es",
+      "movil": "671263985",
+      "direccion": "C/admin Numero 10 Bajo D",
+      "provincia": "Pontevedra",
+      "municipio": "Barro",
+      "fecha_alta": "2025-12-20",
+      "tipoCliente": "empresa",
+      "historico": true,
+      "lopd": true,
+      "tipo": "admin",
+      "password": "$2b$10$NzlpsG2Wd4M8kO7.P7Kayu.tasGvnmvlta4OiiYNsdRMUlOIDbebm"
     }
   ],
   "noticias": [
     {
-      "id": "9b74",
+      "id": "1",
       "titulo": "Los coches chinos conquistan Europa ",
       "contenido": "Los coches chinos a la conquista europea. En 2025, marcas como BYD, MG y NIO ya controlan más del 10 % del mercado europeo. Su éxito se debe a precios competitivos, tecnología avanzada y una oferta eléctrica que atrae a consumidores y gobiernos. Mientras fabricantes tradicionales como Volkswagen y Renault intentan adaptarse, China gana terreno gracias a una producción eficiente y una estrategia de expansión agresiva en toda la Unión Europea.",
       "fecha": "2025-10-23"
     },
     {
-      "id": "4af8",
+      "id": "2",
       "titulo": "Toyota presenta un nuevo motor",
       "contenido": "Toyota presenta su nuevo eléctrico bZ4X, un SUV compacto con autonomía de hasta 450 km y tecnología avanzada de asistencia al conductor. Este modelo marca el inicio de la nueva familia bZ (beyond Zero) de Toyota, enfocada en cero emisiones. El bZ4X cuenta con tracción total opcional, carga rápida y un diseño futurista que combina eficiencia y confort. Llegará a concesionarios en 2025, posicionándose como una opción competitiva en el mercado EV global.",
       "fecha": "2025-10-23"
     },
     {
-      "id": "2f48",
+      "id": "3",
       "titulo": "La UE dando palos de ciego en el mundo del motor",
       "contenido": "A pesar del firme respaldo de países como España y Francia a la meta de 2035 para prohibir la venta de coches nuevos con motores de combustión interna en la Unión Europea, Alemania ha impulsado una revisión de esta normativa ante la presión de los fabricantes de automóviles. Esta directiva forma parte del Pact Verde Europeo y pretende acelerar el fin de los combustibles fósiles en el transporte.",
       "fecha": "2025-10-24"
-    },
-    {
-      "id": "ef89",
-      "titulo": "hooalsdfasdfa",
-      "contenido": "asdfawefasdvaesdfgvaDSFVadsbh",
-      "fecha": "2025-11-12"
     }
   ],
-  "coches": [
+  "taller": [
     {
+      "id": "606d",
+      "matricula": "1540FHJ",
+      "movilCliente": "675184834",
+      "fechaCita": "2003-09-22",
+      "servicioTaller": "Revision",
+      "estadoCita": "Finalizado",
+      "acepta": true
+    },
+    {
+      "id": "5e00",
+      "matricula": "1111ARS",
+      "movilCliente": "603772938",
+      "fechaCita": "2025-11-29",
+      "servicioTaller": "Frenos",
+      "estadoCita": "Pendiente",
+      "acepta": true
+    },
+    {
+      "id": "40e4",
       "matricula": "1234ABC",
-      "marca": "BMW",
-      "modelo": "Serie 3",
-      "fechaAlta": "2025-10-24",
-      "dueno": "Pepe Rodriguez",
-      "itv": true,
-      "combustible": "Gasolina",
-      "id": "c1a2"
+      "movilCliente": "603772938",
+      "fechaCita": "2025-11-25",
+      "servicioTaller": "Frenos",
+      "estadoCita": "Pendiente",
+      "acepta": true
     },
     {
-      "matricula": "5678DEF",
-      "marca": "Audi",
-      "modelo": "A4",
-      "fechaAlta": "2025-10-24",
-      "dueno": "Mariano Rajoi",
-      "itv": false,
-      "combustible": "Diésel",
-      "id": "d3b4"
+      "id": "2a73",
+      "matricula": "1111ARS",
+      "movilCliente": "603772938",
+      "fechaCita": "2025-11-03",
+      "servicioTaller": "Neumáticos",
+      "estadoCita": "Pendiente",
+      "acepta": true
     },
     {
-      "id": "5b06",
-      "matricula": "3919GPX",
-      "modelo": "Verso",
-      "combustible": "Diésel",
-      "fechaAlta": "2025-12-05",
-      "dueno": "Yago Gefaell",
-      "marca": "Kia",
-      "itv": true
+      "id": "ad99",
+      "matricula": "1111ARS",
+      "movilCliente": "603772938",
+      "fechaCita": "2025-11-03",
+      "servicioTaller": "Neumáticos",
+      "estadoCita": "Pendiente",
+      "acepta": false
+    },
+    {
+      "id": "2f29",
+      "matricula": "7652DFH",
+      "movilCliente": "633929193",
+      "fechaCita": "2025-11-10",
+      "servicioTaller": "Cambio de aceite",
+      "estadoCita": "Pendiente",
+      "acepta": true
+    },
+    {
+      "id": "854e",
+      "matricula": "6517ABC",
+      "movilCliente": "666666666",
+      "fechaCita": "2025-11-14",
+      "servicioTaller": "PreITV",
+      "estadoCita": "Pendiente",
+      "acepta": true
     }
   ]
 }

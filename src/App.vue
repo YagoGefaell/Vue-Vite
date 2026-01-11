@@ -1,38 +1,26 @@
-<script setup>
-import NavBar from './components/NavBar.vue'
-import FooTer from './components/FooTer.vue'
-import { RouterView } from 'vue-router'
-</script>
-
 <template>
-  <!-- Vídeo de fondo full screen -->
-  <router-view name="background" />
-
-  <!-- Contenedor centrado 80% -->
-  <div id="app-container">
+  <!-- Contenedor padre al 80% centrado -->
+  <div id="app">
     <NavBar />
-
-    <main>
+    <!-- Fija arriba dentro del 80% -->
+    <main class="flex-grow-l overflow-auto">
       <router-view />
     </main>
-
-    <FooTer />
+    <FooTer class="mt-auto" />
+    <!-- Fija abafo dentro del 80% -->
   </div>
 </template>
 
+<script setup>
+import NavBar from "./components/NavBar.vue";
+import FooTer from "./components/FooTer.vue";
+</script>
+
 <style scoped>
-/* Contenedor principal 80% centrado */
-#app-container {
+#app {
   max-width: 80%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  position: relative; /* Para estar sobre el vídeo */
-  z-index: 2;
-}
-main {
-  flex: 1;
+  margin: 0 auto; /* centra horizontalmente */
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
