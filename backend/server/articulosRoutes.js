@@ -39,7 +39,7 @@ const upload = multer({ storage: storage });
 
 // AHORA VIENEN LAS RUTAS USANDO EL router DE EXPRESS
 // Obtener todos los artículo
-router.get("/", verificarToken, async (req, res) => {
+router.get("/", async (req, res) => {
   const articulos = await Articulo.find();
   res.json(articulos);
 });

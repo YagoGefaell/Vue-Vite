@@ -5,8 +5,8 @@ import express from "express";
 import { Resend } from "resend";
 
 const router = express.Router();
-console.log("RESEND_API_KEY:", process.env.RESEND_APY_KEY);
-const resend = new Resend(process.env.RESEND_APY_KEY);
+console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 router.post("/", async (req, res) => {
   const { nombre, email, asunto, mensaje } = req.body;
