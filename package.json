@@ -2,6 +2,7 @@
   "name": "gefaellperezdelis",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "json-server": "json-server --watch backend/data/db.json --port 3000",

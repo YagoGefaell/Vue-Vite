@@ -47,10 +47,6 @@ export async function login(req, res) {
   }
 }
 
-// Middleware: verificar JWT
-// Se usa en rutas que requieren autenticación
-// Verifica el token enviado en el header Authorization
-
 export function verificarToken(req, res, next) {
   //Mandamos el token en la peticion http y lo almacenamoos aqui
   console.log("🔍 Middleware verificarToken ejecutándose...");

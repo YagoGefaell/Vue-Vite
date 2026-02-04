@@ -2,18 +2,16 @@ import axios from "axios";
 //  librería de JavaScript que actúa como un cliente HTTP
 // para realizar solicitudes entre el navegador y el servidor,
 // URL base de la "API". Si usas json-server local, asegúrate de la IP:
-const API_URL = "http://localhost:5000/api/auth/clientes";
+const API_URL = "http://localhost:3000/clientes";
 
 // Función para obtener la lista de clientes desde la API
 
 export function getClientes(mostrarHistorico) {
-  let url = `${API_URL}?_sort=apellidos&_order=asc`;
+  let url = `${API_URL}?_sort=apellidos`;
 
   if (!mostrarHistorico) {
-    // Solo clientes con histórico = true
     url += `&historico=true`;
   } else {
-    // Todos los clientes, sin filtrar por histórico
     url += ``;
   }
 
@@ -25,11 +23,6 @@ export function getClientes(mostrarHistorico) {
       return res.data;
     })
     .catch((err) => {
-      console.error(
-        "Frontend ERROR:",
-        err.response?.status,
-        err.response?.data
-      );
       throw err;
     });
 }
@@ -37,7 +30,7 @@ export function getClientes(mostrarHistorico) {
 // Función para agregar cliente nuevo
 export const addCliente = (nuevoCliente) => {
   return axios
-    .post("http://localhost:3000/clientes", nuevoCliente)
+    .post(`${API_URL}`, nuevoCliente)
     .then((res) => res.data);
 };
 
@@ -52,7 +45,7 @@ export const deleteCliente = (id) => {
 //Funcion actualizar un cliente por su id
 export const updateCliente = (id, clienteActualizado) => {
   return axios
-    .put(`http://localhost:3000/clientes/${id}`, clienteActualizado)
+    .put(`${API_URL}/${id}`, clienteActualizado)
     .then((res) => res.data);
 };
 
@@ -61,7 +54,7 @@ export const getClientePorDni = async (dni) => {
   try {
     // Si tu API permite filtrar por DNI (ej. JSON-Server), puedes hacer:
     const response = await axios.get(
-      `http://localhost:3000/clientes?dni=${dni}`
+      `${API_URL}?dni=${dni}`
     );
     // Si devuelve un array, retornamos el primer resultado o null si no hay ninguno
     return response.data.length > 0 ? response.data[0] : null;

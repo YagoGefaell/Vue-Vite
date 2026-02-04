@@ -116,7 +116,6 @@ onMounted(async () => {
     const res = await fetch(API_URL)
     if (!res.ok) throw new Error("Error al cargar las noticias")
     noticias.value = await res.json()
-    console.log("Noticias cargadas:", noticias.value)
   } catch (error) {
     console.error("Error cargando noticias:", error)
   }

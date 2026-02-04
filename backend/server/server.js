@@ -29,17 +29,10 @@ app.use(cors());
 
 app.use(express.json());
 
-// Rutas DE MONGOOSE, JSON SERVER NO ES NECESARIO LAS RUTAS LAS CREA AUTOMATICAMENTE
-// json-server es un backend ya construido.
-// Express es un backend que TÚ construyes.
-// Por eso json-server no requiere rutas y Express sí.
 app.use("/api/articulos", articulosRoutes);
 
 app.use("/api/auth", authController);
-// Verificar variable
-//console.log("MONGODB_URI =", process.env.MONGODB_URI);
 
-/// Conexión a MongoDB
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB a la base de datos BBDD"))

@@ -310,7 +310,7 @@
       </div>
     </form>
     <!-- Lista de Clientes -->
-    <div class="table-responsive" v-if="admin && clientes.length > 0">
+    <div class="table-responsive" v-if="admin">
       <h4 class="text-center w-100">Listado Clientes</h4>
       <table
         class="table table-bordered table-striped table-hover table-sm align-middle"
@@ -424,29 +424,25 @@ const nuevoCliente = ref({
   password: "",
 });
 
-//////////// Declaraciones de estado o variables reactivas
 const passwordsIguales = ref(true);
-const editando = ref(false); // Estado de edición para el formulario para usar el mismo boton
-const clienteEditandoId = ref(null); //
-
-const mostrarHistorico = ref(false); //Estado del checkbox
+const editando = ref(false);
+const clienteEditandoId = ref(null);
+const mostrarHistorico = ref(false);
 
 //Función listar clientes con get
 const clientes = ref([]);
 const userDni = ref("");
-const numclientes = ref(0); // Número total de clientes
-const currentPage = ref(1); // Página actual
-const clientesPorPage = 10; // Número de clientes por página
+const numclientes = ref(0);
+const currentPage = ref(1);
+const clientesPorPage = 10;
 
 const admin = sessionStorage.getItem("isAdmin") === "true";
 const isLogueado = sessionStorage.getItem("isLogueado") === "true";
-/////////// zona CargarClientes
 
-// Zona Cargar clientes Al Montar el componente
 onMounted(async () => {
   userDni.value = sessionStorage.getItem("userDni");
   await cargarClientes();
-  currentPage.value = 1; // Iniciar en la primera página
+  currentPage.value = 1;
 
   if (isLogueado && !admin) {
     await buscarClientePorDNI(userDni.value);
@@ -466,12 +462,6 @@ const nextPagina = () => {
   }
 };
 
-// Propiedad computada para obtener los clientes de la página actual
-// computed crea una propiedad que se actualiza automáticamente
-//cuando cambian las dependencias (CurrentPage o clientes)
-// es decir paso pagina o vuelvo atrás cargando los clientes de esa página
-//slice extrae una sección del array clientes
-//start es el índice inicial y end el índice final (no incluido)
 const clientesPaginados = computed(() => {
   const start = (currentPage.value - 1) * clientesPorPage;
   const end = start + clientesPorPage;
@@ -481,8 +471,8 @@ const clientesPaginados = computed(() => {
 const cargarClientes = async () => {
   getClientes(mostrarHistorico.value).then((data) => {
     clientes.value = data;
-    numclientes.value = data.length; //Actualiza el numero total de clientes
-    currentPage.value = 1; // Reiniciar a la primera págiona al cargar
+    numclientes.value = data.length;
+    currentPage.value = 1;
   });
   Swal.fire({
     icon: "success",
@@ -529,7 +519,6 @@ const guardarCliente = async () => {
     }
   }
 
-  // Confirmación antes de guardar
   const result = await Swal.fire({
     title: editando.value
       ? "¿Desea modificar este cliente?"
@@ -618,12 +607,6 @@ const guardarCliente = async () => {
   }
 };
 
-/* Zona Cargar clientes Al Montar el componente ///////////////
-onMounted(async () => {
-  guardarCliente();
-});
-*/
-
 function validarPasswords() {
   if (nuevoCliente.value.password != nuevoCliente.value.password2) {
     passwordsIguales.value = false;
@@ -634,9 +617,7 @@ function validarPasswords() {
 
 // Funcion Eliminar Cliente con patch (histórico a false)
 const eliminarCliente = async (movil) => {
-  // Refrescar lista desde la API
   clientes.value = await getClientes(mostrarHistorico.value);
-  // Buscar cliente completo (que incluye el ID)
   const clienteAEliminar = clientes.value.find(
     (cliente) => cliente.movil === movil
   );
@@ -685,8 +666,6 @@ const eliminarCliente = async (movil) => {
 };
 
 /* Cargar clientes al montar el componente /////////////////////////*/
-
-// Función Editar Cliente (carga datos en el formulario)
 const editarCliente = (movil) => {
   const cliente = clientes.value.find((c) => c.movil === movil);
   if (!cliente) {
@@ -715,7 +694,6 @@ const editarCliente = (movil) => {
   clienteEditandoId.value = cliente.id;
 };
 
-///////////////Función para activar cliente (poner historico en true)
 const activarCliente = async (cliente) => {
   const confirmacion = await Swal.fire({
     title: `¿Activar cliente ${cliente.nombre} ${cliente.apellidos}?`,
@@ -759,8 +737,6 @@ const activarCliente = async (cliente) => {
     });
   }
 };
-
-///CODIGO BUSQUEDA COMPONENTES
 
 const buscarClientePorDNI = async (dni) => {
   if (!dni || dni.trim() === "") {
@@ -831,10 +807,9 @@ const capitalizarTexto = (propiedad) => {
 };
 
 /////////////////////SCRIPTS AUXILIARES /////////////////////////////////
-const dniValido = ref(true); // Por defecto es válido y no muestra error al iniciar
+const dniValido = ref(true);
 const emailValido = ref(true);
 
-// conversor fecha
 const formatearFechaParaInput = (fecha) => {
   if (!fecha) return "";
   const partes = fecha.split("-");
@@ -846,9 +821,6 @@ const formatearFechaParaInput = (fecha) => {
   )}`;
 };
 
-///// VALIDACIONES
-
-//Validar email
 const validarEmail = () => {
   const email = nuevoCliente.value.email.trim();
   // Expresión simple para email válido
@@ -856,9 +828,6 @@ const validarEmail = () => {
   emailValido.value = regex.test(email);
 };
 
-// Estado de validez del DNI/NIE si la estructura de datos es más compleja se usa reactive
-
-// Función para validar DNI y NIE
 const validarDniNie = (valor) => {
   const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
   const dniRegex = /^[0-9]{8}[A-Z]$/;
@@ -879,13 +848,11 @@ const validarDniNie = (valor) => {
   return false;
 };
 
-// Validar al salir del campo
 const validarDni = () => {
   nuevoCliente.value.dni = nuevoCliente.value.dni.trim().toUpperCase();
   dniValido.value = validarDniNie(nuevoCliente.value.dni);
 };
 
-// Control móvil
 const movilValido = ref(true);
 const movilRegex = /^[67]\d{8}$/;
 
@@ -906,9 +873,7 @@ const validarMovil = () => {
   }
 };
 
-// Función para resetear el formulario
 const resetForm = () => {
-  // Reiniciar el formulario
   nuevoCliente.value = {
     dni: "",
     nombre: "",
@@ -924,42 +889,28 @@ const resetForm = () => {
     password: "",
     password2: "",
   };
-  // Resetear estado de edición
   editando.value = false;
   clienteEditandoId.value = null;
-  // Resetear validaciones
   dniValido.value = true;
   movilValido.value = true;
   emailValido.value = true;
-  // Resetear aceptación de términos
 };
 
-// Provincias y municipios
-
-const provincias = ref(provmuniData.provincias); // Array de provincias
-const municipios = ref(provmuniData.municipios); // Array de municipios para filtrarlos
-const municipiosFiltrados = ref([]); // vacío pero contendrá los municipios filtrados
+const provincias = ref(provmuniData.provincias);
+const municipios = ref(provmuniData.municipios);
+const municipiosFiltrados = ref([]); 
 
 const filtrarMunicipios = () => {
-  // nombre de la provincia elegida en el <select>
   const nombreProv = nuevoCliente.value.provincia;
-
-  // 1️⃣ buscar en provincias el objeto con ese nombre
   const prov = provincias.value.find((p) => p.nm === nombreProv);
   if (!prov) {
     municipiosFiltrados.value = [];
     return;
   }
-
-  // 2️⃣ los dos primeros dígitos del id de la provincia
   const codigoProv = prov.id.slice(0, 2);
-
-  // 3️⃣ filtrar los municipios cuyo id empiece por esos dos dígitos
   municipiosFiltrados.value = municipios.value.filter((m) =>
     m.id.startsWith(codigoProv)
   );
-
-  // 4️⃣ opcional: resetear el municipio si ya no corresponde
   nuevoCliente.value.municipio = "";
 };
 </script>
