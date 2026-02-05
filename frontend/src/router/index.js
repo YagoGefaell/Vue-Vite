@@ -11,6 +11,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import TablaLogin from "../components/TablaLogin.vue";
 import { esAdmin } from "../api/authApi";
 import Contacto from "../components/Contacto.vue";
+import ListaModelos from "../components/ListaModelos.vue";
+import Buscar from "../components/Buscar.vue";
+import TablaSuccess from "../components/TablaSuccess.vue";
+import TablaCanceL from "../components/TablaCanceL.vue";
+import Pedidos from "../components/Pedidos.vue";
+import Cesta from "../components/Cesta.vue";
 
 const routes = [
   {
@@ -39,7 +45,7 @@ const routes = [
     component: AvisoLegal,
   },
   {
-    path: "/politicaprivacidad",
+    path: "/politica-privacidad",
     name: "PoliticaPrivacidad",
     component: PoliticaPrivacidad,
   },
@@ -69,6 +75,36 @@ const routes = [
     path: "/contacto",
     name: "Contacto",
     component: Contacto,
+  },
+  {
+    path: "/buscar",
+    name: "Buscar",
+    component: Buscar,
+  },
+  {
+    path: "/pedidos",
+    name: "Pedidos",
+    component: Pedidos,
+  },
+  {
+    path: "/listamodelos",
+    name: "ListaModelos",
+    component: ListaModelos,
+  },
+  {
+    path: "/cesta",
+    name: "Cesta",
+    component: Cesta,
+  },
+  {
+    path: "/success",
+    name: "TablaSuccess",
+    component: TablaSuccess,
+  },
+  {
+    path: "/cancel",
+    name: "TablaCanceL",
+    component: TablaCanceL,
   },
 ];
 

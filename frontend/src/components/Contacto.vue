@@ -1,86 +1,100 @@
 <template>
-  <div
-    class="vh-100 d-flex align-items-center justify-content-center bg-light flex-column my-4 p-4"
-  >
-    <div class="card shadow-sm w-100" style="max-width: 540px">
-      <div class="card-body">
-        <h5 class="card-title text-center mb-4">Formulario de Contacto</h5>
+  <div class="container mx-auto my-4 p-4 border rounded-4 shadow-lg bg-light">
+    <h3 class="text-center gestion-header mb-4">
+      <i class="bi bi-envelope-paper me-2"></i> Formulario de Contacto
+    </h3>
 
-        <form @submit.prevent="enviarMensaje" class="mb-4 rounded-4">
-          <div class="mb-3">
-            <label class="form-label">Nombre</label>
-            <input
-              v-model="form.nombre"
-              type="text"
-              class="form-control"
-              required
-            />
-          </div>
+    <!-- Formulario de contacto -->
+    <form @submit.prevent="enviarMensaje" class="mb-4">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="nombre" class="form-label">Nombre:</label>
+          <input
+            type="text"
+            id="nombre"
+            v-model="form.nombre"
+            class="form-control"
+            required
+          />
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email:</label>
+          <input
+            type="email"
+            id="email"
+            v-model="form.email"
+            class="form-control"
+            required
+          />
+        </div>
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label">Correo electrónico</label>
-            <input
-              v-model="form.email"
-              type="email"
-              class="form-control"
-              required
-            />
-          </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <label for="asunto" class="form-label">Asunto:</label>
+          <input
+            type="text"
+            id="asunto"
+            v-model="form.asunto"
+            class="form-control"
+            placeholder="Asunto del mensaje"
+          />
+        </div>
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label">Asunto</label>
-            <input
-              v-model="form.asunto"
-              type="text"
-              class="form-control"
-              required
-            />
-          </div>
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <label for="mensaje" class="form-label">Mensaje:</label>
+          <textarea
+            id="mensaje"
+            v-model="form.mensaje"
+            class="form-control"
+            rows="5"
+            required
+          ></textarea>
+        </div>
+      </div>
 
-          <div class="mb-3">
-            <label class="form-label">Mensaje</label>
-            <textarea
-              v-model="form.mensaje"
-              class="form-control"
-              rows="4"
-              required
-            ></textarea>
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary px-4" :disabled="enviando">
+          <span v-if="enviando">
+            <i class="bi bi-hourglass-split"></i> Enviando...
+          </span>
+          <span v-else> <i class="bi bi-send"></i> Enviar Mensaje </span>
+        </button>
+      </div>
+    </form>
+    <div class="row justify-content-center mt-5">
+      <div class="col-12 col-md-6">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-primary text-white text-center py-3">
+            <h5 class="mb-0">
+              <i class="bi bi-geo-alt-fill me-2"></i>
+              Nuestra Ubicación
+            </h5>
           </div>
-
-          <div class="d-grid">
-            <button
-              :disabled="enviando"
-              type="submit"
-              class="btn btn-primary d-flex g-3 justify-content-center text-center"
-            >
-              <i class="bi bi-send-fill me-2"></i>
-              <span v-if="!enviando">Enviar</span>
-              <span v-else>Enviando...</span>
-            </button>
+          <div class="card-body p-0">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2950.5865753883815!2d-8.692220923738883!3d42.25138037429632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd2f62e588cfce69%3A0x378485bfa6edd1be!2sAvenida%20de%20Galicia%2C%20101%2C%20Teis%2C%2036216%20Vigo%2C%20Pontevedra!5e0!3m2!1ses!2ses!4v1733847920000!5m2!1ses!2ses"
+              width="100%"
+              height="400"
+              style="border: 0"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Ubicación Avenida de Galicia, 101, Teis"
+            ></iframe>
           </div>
-        </form>
+        </div>
       </div>
     </div>
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5906.54201227203!2d-8.692645823424254!3d42.25138484195979!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd2f62e588cfce69%3A0x378485bfa6edd1be!2sIES%20de%20Teis!5e0!3m2!1ses!2ses!4v1765361977695!5m2!1ses!2ses"
-      width="600"
-      height="450"
-      style="border: 0"
-      allowfullscreen=""
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade"
-      class="mt-5 rounded-4"
-    >
-    </iframe>
   </div>
 </template>
-
 <script setup>
 import { reactive, ref } from "vue";
-import { enviarContacto } from "../api/contacto";
+import axios from "axios";
 import Swal from "sweetalert2";
 
-//Formulario reactivo
 const form = reactive({
   nombre: "",
   email: "",
@@ -88,43 +102,47 @@ const form = reactive({
   mensaje: "",
 });
 
-//Estado de envio
 const enviando = ref(false);
 
-//Función para enviar mensaje
 async function enviarMensaje() {
   if (enviando.value) return;
   enviando.value = true;
-
   try {
-    const data = await enviarContacto(form);
+    const response = await axios.post(
+      "http://localhost:5000/api/contacto",
+      form
+    );
 
-    if (data.ok) {
+    if (response.data.ok) {
       Swal.fire({
         icon: "success",
-        title: "¡Mensaje enviado!",
-        text: "Gracias por contactarnos. Te responderemos lo antes posible.",
-        confirmButtonText: "Aceptar",
+        title: "Mensaje enviado correctamente",
+        showConfirmButton: false,
+        timer: 1500,
       });
+      // Limpiar formulario
+      form.nombre = "";
+      form.email = "";
+      form.asunto = "";
+      form.mensaje = "";
     } else {
-      throw new Error("Respuesta inesperada del servidor");
+      Swal.fire({
+        icon: "error",
+        title: "Error al enviar el mensaje",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     }
   } catch (error) {
+    console.error("Error al enviar el mensaje:", error);
     Swal.fire({
       icon: "error",
-      title: "Error al enviar",
-      text:
-        error.response?.data?.message ||
-        "Hubo un problema al enviar tu mensaje. Inténtalo de nuevo.",
-      confirmButtonText: "Aceptar",
+      title: "Error al enviar el mensaje",
+      text: "Por favor, inténtalo de nuevo más tarde.",
+      showConfirmButton: true,
     });
   } finally {
     enviando.value = false;
-    //Limpiar formulario
-    form.nombre = "";
-    form.email = "";
-    form.asunto = "";
-    form.mensaje = "";
   }
 }
 </script>

@@ -204,7 +204,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import Swal from "sweetalert2";
-import { getCita, addCita, deleteCita, updateCita } from "@/api/citasTaller.js";
+import { getCita, addCita, deleteCita, updateCita } from "@/api/taller.js";
 import { getClientes } from "../api/clientes";
 
 /* =================================== SCRIPT CRUD =================================== */

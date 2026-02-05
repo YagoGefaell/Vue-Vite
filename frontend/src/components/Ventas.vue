@@ -1,65 +1,82 @@
 <template>
-  <section class="catalogo-ventas mt-5">
-    <h4 class="titulo-seccion">
-      <i class="bi bi-cash-coin me-2"></i>Vehículos en Venta
-    </h4>
+  <div class="container mx-auto my-4 p-4 border rounded-4 shadow-lg bg-light">
+    <section class="catalogo-ventas mt-5">
+      <h4 class="titulo-seccion">
+        <i class="bi bi-cash-coin me-2"></i>Vehículos en Venta
+      </h4>
 
-    <div class="row g-4 justify-content-left mt-3">
-      <div
-        class="col-lg-3 col-md-6 col-sm-12"
-        v-for="auto in vehiculos"
-        :key="auto.matricula"
-      >
-        <div class="card card-vehiculo h-100">
-          <img
-            :src="auto.imageUrl"
-            class="card-img-top imagen-vehiculo"
-            alt="Imagen del vehículo"
-          />
+      <div class="row g-4 justify-content-left mt-3">
+        <div
+          class="col-lg-3 col-md-6 col-sm-12"
+          v-for="auto in vehiculos"
+          :key="auto.matricula"
+        >
+          <div class="card card-vehiculo h-100">
+            <img
+              :src="auto.imageUrl"
+              class="card-img-top imagen-vehiculo"
+              alt="Imagen del vehículo"
+            />
 
-          <div class="card-body">
-            <h5 class="card-title text-primary fw-bold">
-              {{ auto.marca }} {{ auto.modelo }}
-            </h5>
+            <div class="card-body">
+              <h5 class="card-title text-primary fw-bold">
+                {{ auto.marca }} {{ auto.modelo }}
+              </h5>
 
-            <p class="dato"><strong>Año:</strong> {{ auto.anio }}</p>
-            <p class="dato">
-              <strong>Kilómetros:</strong>
-              {{ Number(auto.kilometros || 0).toLocaleString() }} km
-            </p>
-            <p class="dato">
-              <strong>Precio:</strong>
-              {{ Number(auto.precio || 0).toLocaleString() }} €
-            </p>
-          </div>
+              <p class="dato"><strong>Año:</strong> {{ auto.anio }}</p>
+              <p class="dato">
+                <strong>Kilómetros:</strong>
+                {{ Number(auto.kilometros || 0).toLocaleString() }} km
+              </p>
+              <p class="dato">
+                <strong>Precio:</strong>
+                {{ Number(auto.precio || 0).toLocaleString() }} €
+              </p>
+            </div>
 
-          <div class="card-footer text-center bg-light">
-            <button
-              class="btn btn-sm btn-estado"
-              :class="{ vendido: auto.estado === 'vendido' }"
-              :disabled="auto.estado === 'vendido'"
-            >
-              <i class="bi bi-cart"></i>
-              {{ auto.estado.toUpperCase() }}
-            </button>
+            <div class="card-footer text-center bg-light">
+              <button @click="agregarACesta(auto)"
+                class="btn btn-sm btn-estado"
+                :class="{ vendido: auto.estado === 'vendido' }"
+                :disabled="auto.estado === 'vendido'"
+              >
+                <i class="bi bi-cart"></i>
+                {{ auto.estado.toUpperCase() }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getArticulos } from "../api/articulos";
+import { getArticulos } from "@/api/articulos.js";
+import { useCestaStore } from "@/store/cesta.js";
+
+const cestaStore = useCestaStore(); 
 
 const vehiculos = ref([]);
 
 onMounted(async () => {
-  const lista = await getArticulos();
-
-  vehiculos.value = lista;
+    vehiculos.value = await getArticulos();
 });
+
+const urlImagen = (ruta) => {
+    if (!ruta) return "/no-image.png";
+    return `http://localhost:5000${ruta}`
+};
+
+const agregarACesta = (vehiculos) => {
+    cestaStore.addProducto({
+        id: vehiculos._id,
+        nombre: `${vehiculos.marca} ${vehiculos.modelo}`,
+        precio: vehiculos.precio,
+        imagen: urlImagen(vehiculos.imagen),
+    });
+}
 
 </script>
 

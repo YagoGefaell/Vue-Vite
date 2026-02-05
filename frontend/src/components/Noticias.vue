@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-5">
+  <div class="container mx-auto my-4 p-4 border rounded-4 shadow-lg bg-light">
     <h1 class="text-center mb-4">Noticias motor</h1>
 
     <!-- Formulario para agregar noticia -->

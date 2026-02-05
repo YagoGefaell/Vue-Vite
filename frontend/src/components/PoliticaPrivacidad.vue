@@ -1,5 +1,5 @@
 <template>
-    <div class="container my-5">
+    <div class="container mx-auto my-4 p-4 border rounded-4 shadow-lg bg-light">
       <div class="text-center mb-4">
         <h1 class="display-6">Politica de Privacidad</h1>
       </div>
