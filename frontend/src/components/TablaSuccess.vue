@@ -27,11 +27,11 @@
 
 <script setup>
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { onMounted, onBeforeUnmount, ref } from "vue";
 import { useCestaStore } from "@/store/cesta.js";
 import { addFactura } from "@/api/facturas.js";
-import logo from "@/assets/TeisMotor.svg"; // Logo de la empresa
+import logo from "@/assets/TeisMotor.png"; // Logo de la empresa
 
 const cesta = useCestaStore();
 const cartItems = ref([]);
@@ -149,7 +149,7 @@ const generarFacturaPDF = () => {
     ]);
 
     // Generar la tabla en el PDF
-    doc.autoTable({
+    autoTable(doc, {
       startY: 80,
       head: headers,
       body: data,

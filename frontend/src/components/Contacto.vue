@@ -107,38 +107,48 @@ const enviando = ref(false);
 async function enviarMensaje() {
   if (enviando.value) return;
   enviando.value = true;
+
   try {
+    const payload = {
+      nombre: form.nombre,
+      email: form.email,
+      asunto: form.asunto,
+      mensaje: form.mensaje,
+    };
+
     const response = await axios.post(
       "http://localhost:5000/api/contacto",
-      form
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     );
 
-    if (response.data.ok) {
+    if (response.data?.ok) {
       Swal.fire({
         icon: "success",
         title: "Mensaje enviado correctamente",
         showConfirmButton: false,
         timer: 1500,
       });
+
       // Limpiar formulario
       form.nombre = "";
       form.email = "";
       form.asunto = "";
       form.mensaje = "";
     } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error al enviar el mensaje",
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      throw new Error("Respuesta inválida del servidor");
     }
   } catch (error) {
     console.error("Error al enviar el mensaje:", error);
+
     Swal.fire({
       icon: "error",
       title: "Error al enviar el mensaje",
-      text: "Por favor, inténtalo de nuevo más tarde.",
+      text: "No se pudo enviar el mensaje. Intenta nuevamente.",
       showConfirmButton: true,
     });
   } finally {

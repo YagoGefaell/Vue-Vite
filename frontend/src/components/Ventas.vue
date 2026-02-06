@@ -61,20 +61,15 @@ const cestaStore = useCestaStore();
 const vehiculos = ref([]);
 
 onMounted(async () => {
-    vehiculos.value = await getArticulos();
+  vehiculos.value = await getArticulos();
 });
-
-const urlImagen = (ruta) => {
-    if (!ruta) return "/no-image.png";
-    return `http://localhost:5000${ruta}`
-};
 
 const agregarACesta = (vehiculos) => {
     cestaStore.addProducto({
         id: vehiculos._id,
         nombre: `${vehiculos.marca} ${vehiculos.modelo}`,
         precio: vehiculos.precio,
-        imagen: urlImagen(vehiculos.imagen),
+        imagen: vehiculos.imageUrl,
     });
 }
 

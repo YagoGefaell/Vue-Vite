@@ -229,6 +229,7 @@ const nuevaCita = ref({
   estadoCita: "Pendiente",
   acepta: false,
 });
+
 async function cargarCitas() {
   try {
     Swal.fire({
@@ -238,9 +239,7 @@ async function cargarCitas() {
       timer: 1500,
     });
     citas.value = await getCita();
-    citas.value = citas.value.sort(
-      (a, b) => new Date(b.fecha) - new Date(a.fecha)
-    );
+    console.log("Citas cargadas:", citas.value);
   } catch (error) {
     console.error("Fallo al cargar los datos de la bbdd", error);
   }

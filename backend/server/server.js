@@ -8,10 +8,6 @@ import Stripe from "stripe";
 import authRoutes from "./authRoutes.js";
 import contactoRoutes from "./contactos.js";
 
-// a diferencia de json-server, aquí necesita configurar las rutas y controladores manualmente
-// json-server crea automáticamente las rutas basadas en el archivo JSON, mongoose requiere definir esquemas y modelos
-// MONGOSEE NO SABE NADA DE RUTAS CONTROLADRES Y MODELOS, HAY QUE CREARLOS MANUALMENTE
-
 import articulosRoutes from "./articulosRoutes.js"; // ruta al router backend
 import facturasRoutes from "./facturasRoutes.js"; // ruta al router de facturas
 import { soloAdmin, verificarToken } from "./authController.js";

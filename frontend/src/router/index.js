@@ -61,7 +61,7 @@ const routes = [
     component: Ventas,
   },
   {
-    path: "/citas-taller",
+    path: "/taller",
     name: "CitasTaller",
     component: CitasTaller,
     meta: { requiresAdmin: true },

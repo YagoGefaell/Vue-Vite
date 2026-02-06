@@ -1266,6 +1266,7 @@ const imprimirListado = () => {
       </style>
     </head>
     <body>
+      <img src="src/assets/TeisMotor.png" alt="Logo" style="position: absolute; top: 20px; left: 20px; width: 100px;">
       <h1>Listado de Clientes</h1>
       <p class="fecha-impresion">Fecha de impresión: ${new Date().toLocaleString('es-ES')}</p>
       <table>
