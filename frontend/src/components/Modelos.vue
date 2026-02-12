@@ -348,6 +348,120 @@
       <h6 class="text-center mb-1 bg-secondary text-white">
         Listado de Modelos
       </h6>
+      <div class="filtro-panel">
+        <div class="filtro-panel__header">
+          <i class="bi bi-funnel me-2"></i>
+          <span>Filtrado rapido</span>
+        </div>
+        <div class="row g-2 align-items-end">
+          <div class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Filtrar por:</label>
+            <select
+              v-model="filtro.campo"
+              class="form-select form-select-sm rounded-0"
+              @change="filtro.valor = ''; filtro.operador = ''"
+            >
+              <option value="">Sin filtro</option>
+              <option value="tipo">Tipo</option>
+              <option value="marca">Marca</option>
+              <option value="modelo">Modelo</option>
+              <option value="anio">Año</option>
+              <option value="kilometros">Kilómetros</option>
+              <option value="precio">Precio</option>
+              <option value="combustible">Combustible</option>
+              <option value="estado">Estado</option>
+              <option value="fecha_publicacion">Fecha publicación</option>
+            </select>
+          </div>
+
+          <div v-if="campoTipo === 'numero'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Condición:</label>
+            <select v-model="filtro.operador" class="form-select form-select-sm rounded-0">
+              <option value="">Seleccione</option>
+              <option value="mayor">Mayor que</option>
+              <option value="menor">Menor que</option>
+              <option value="igual">Igual a</option>
+            </select>
+          </div>
+
+          <div v-if="campoTipo === 'fecha'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Condición:</label>
+            <select v-model="filtro.operador" class="form-select form-select-sm rounded-0">
+              <option value="">Seleccione</option>
+              <option value="despues">Después de</option>
+              <option value="antes">Antes de</option>
+            </select>
+          </div>
+
+          <div v-if="filtro.campo === 'tipo'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Tipo:</label>
+            <select v-model="filtro.valor" class="form-select form-select-sm rounded-0">
+              <option value="">Todos</option>
+              <option v-for="t in tiposUnicos" :key="t" :value="t">{{ t }}</option>
+            </select>
+          </div>
+
+          <div v-if="filtro.campo === 'marca'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Marca:</label>
+            <select v-model="filtro.valor" class="form-select form-select-sm rounded-0">
+              <option value="">Todas</option>
+              <option v-for="m in marcasUnicas" :key="m" :value="m">{{ m }}</option>
+            </select>
+          </div>
+
+          <div v-if="filtro.campo === 'combustible'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Combustible:</label>
+            <select v-model="filtro.valor" class="form-select form-select-sm rounded-0">
+              <option value="">Todos</option>
+              <option v-for="c in combustiblesUnicos" :key="c" :value="c">{{ c }}</option>
+            </select>
+          </div>
+
+          <div v-if="filtro.campo === 'estado'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Estado:</label>
+            <select v-model="filtro.valor" class="form-select form-select-sm rounded-0">
+              <option value="">Todos</option>
+              <option value="disponible">Disponible</option>
+              <option value="reservado">Reservado</option>
+              <option value="vendido">Vendido</option>
+            </select>
+          </div>
+
+          <div v-if="filtro.campo === 'modelo'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Modelo:</label>
+            <input
+              v-model="filtro.valor"
+              type="text"
+              class="form-control form-control-sm rounded-0"
+              placeholder="Buscar modelo..."
+            />
+          </div>
+
+          <div v-if="campoTipo === 'numero'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Valor:</label>
+            <input
+              v-model.number="filtro.valor"
+              type="number"
+              class="form-control form-control-sm rounded-0"
+              placeholder="Valor"
+            />
+          </div>
+
+          <div v-if="campoTipo === 'fecha'" class="col-auto">
+            <label class="form-label mb-0 small fw-bold">Fecha:</label>
+            <input v-model="filtro.valor" type="date" class="form-control form-control-sm rounded-0" />
+          </div>
+
+          <div v-if="filtro.campo" class="col-auto">
+            <button
+              class="btn btn-outline-secondary btn-sm rounded-0"
+              @click="filtro.campo = ''; filtro.valor = ''; filtro.operador = ''"
+            >
+              <i class="bi bi-x-circle me-1"></i>Limpiar filtro
+            </button>
+          </div>
+        </div>
+      </div>
       <table
         class="table table-bordered table-striped table-sm table-hover table-sm align-middle"
       >
@@ -361,7 +475,7 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody v-for="(vehiculo, index) in vehiculos">
+        <tbody v-for="(vehiculo, index) in vehiculosFiltrados">
           <tr class="text-center">
             <td>{{ vehiculo.matricula }}</td>
             <td>{{ vehiculo.marca }}</td>
@@ -410,6 +524,64 @@ const matriculaValida = ref(true);
 const matriculaRegex = /^[0-9]{4}[A-Za-z]{3}/;
 
 const vehiculos = ref([]);
+
+const filtro = ref({ campo: "", operador: "", valor: "" });
+
+const campoTipo = computed(() => {
+  const numericos = ["anio", "kilometros", "precio"];
+  const fechas = ["fecha_publicacion"];
+  if (numericos.includes(filtro.value.campo)) return "numero";
+  if (fechas.includes(filtro.value.campo)) return "fecha";
+  return "select";
+});
+
+const tiposUnicos = computed(() =>
+  [...new Set(vehiculos.value.map((c) => c.tipo).filter(Boolean))].sort()
+);
+const marcasUnicas = computed(() =>
+  [...new Set(vehiculos.value.map((c) => c.marca).filter(Boolean))].sort()
+);
+const combustiblesUnicos = computed(() =>
+  [...new Set(vehiculos.value.map((c) => c.combustible).filter(Boolean))].sort()
+);
+
+const vehiculosFiltrados = computed(() => {
+  const { campo, operador, valor } = filtro.value;
+  if (!campo || valor === "" || valor === null || valor === undefined) {
+    return vehiculos.value;
+  }
+
+  return vehiculos.value.filter((coche) => {
+    const raw = coche[campo];
+
+    if (campoTipo.value === "numero") {
+      const num = Number(raw);
+      const ref = Number(valor);
+      if (Number.isNaN(num) || Number.isNaN(ref)) return true;
+      if (operador === "mayor") return num > ref;
+      if (operador === "menor") return num < ref;
+      if (operador === "igual") return num === ref;
+      return true;
+    }
+
+    if (campoTipo.value === "fecha") {
+      const fechaCoche = new Date(raw);
+      const fechaFiltro = new Date(valor);
+      if (Number.isNaN(fechaCoche.getTime()) || Number.isNaN(fechaFiltro.getTime())) {
+        return true;
+      }
+      if (operador === "despues") return fechaCoche >= fechaFiltro;
+      if (operador === "antes") return fechaCoche <= fechaFiltro;
+      return true;
+    }
+
+    if (campo === "modelo") {
+      return String(raw || "").toLowerCase().includes(String(valor).toLowerCase());
+    }
+
+    return String(raw || "").toLowerCase() === String(valor).toLowerCase();
+  });
+});
 
 const vehiculo = ref({
   tipo: "",
@@ -620,7 +792,7 @@ function imprimirPDF() {
   doc.text("Listado de Vehículos", 12, 20);
 
   const headers = [["Matrícula", "Marca", "Estado", "Combustible", "Precio"]];
-  const body = vehiculos.value.map((modelo) => [
+  const body = vehiculosFiltrados.value.map((modelo) => [
     modelo.matricula || "",
     modelo.marca || "",
     modelo.estado?.toUpperCase() || "",
@@ -662,4 +834,55 @@ async function editarVehiculo(matricula) {
   editando.value = true;
 }
 </script>
-<style></style>
+<style scoped>
+.filtro-panel {
+  margin: 10px 0 14px;
+  padding: 12px 12px 10px;
+  border: 1px solid #e6ebf2;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.filtro-panel__header {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #1f3a5f;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.filtro-panel .form-label {
+  color: #2c3e50;
+  letter-spacing: 0.1px;
+}
+
+.filtro-panel .form-select,
+.filtro-panel .form-control {
+  border-color: #d6deea;
+  background-color: #fff;
+}
+
+.filtro-panel .form-select:focus,
+.filtro-panel .form-control:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+}
+
+.filtro-panel .btn-outline-secondary {
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.filtro-panel .btn-outline-secondary:hover {
+  background: #eef2f7;
+  color: #1e293b;
+}
+
+@media (max-width: 768px) {
+  .filtro-panel {
+    padding: 10px;
+  }
+}
+</style>

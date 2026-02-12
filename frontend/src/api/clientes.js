@@ -1,50 +1,75 @@
-import axios from 'axios'
-//  librería de JavaScript que actúa como un cliente HTTP 
-// para realizar solicitudes entre el navegador y el servidor,
-// URL base de la "API". Si usas json-server local, asegúrate de la IP:
-const API_URL = 'http://localhost:3000/clientes'
+import axios from "axios";
 
-// Función para obtener la lista de clientes desde la API
+// 🔹 URL base de la API
+const API_URL = "http://localhost:3000/clientes";
 
-export const getClientes = async (mostrarHistorico) => {
-  let url = API_URL;
-
-  if (!mostrarHistorico) {
-    url += `&historico=true`;
+/* ================================================
+   OBTENER CLIENTES
+   mostrarHistorico = true → devuelve todos
+   mostrarHistorico = false → solo los activos
+================================================ */
+export const getClientes = async (mostrarHistorico = true) => {
+  try {
+    const res = await axios.get(API_URL, {
+      params: { historico: mostrarHistorico },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error al cargar clientes", error);
+    throw error;
   }
-
-  const res = await axios.get(url);
-  return res.data;
 };
 
+/* ================================================
+   AÑADIR CLIENTE NUEVO
+================================================ */
+export const addCliente = async (nuevoCliente) => {
+  try {
+    const res = await axios.post(API_URL, nuevoCliente);
+    return res.data;
+  } catch (error) {
+    console.error("Error al añadir cliente", error);
+    throw error;
+  }
+};
 
-// Función para agregar cliente nuevo
-export const addCliente = (nuevoCliente) => {
-    return axios.post(API_URL, nuevoCliente)
-        .then(res => res.data)
-}
-// Funcion para eliminar un cliente por su id pasanso historico a false
-// Si quieres eliminarlo fisicamente, usa axios.delete
-export const deleteCliente = (id) => {
-    return axios.patch(`${API_URL}/${id}`, {historico:false})
-                .then(res => res.data)
-}
+/* ================================================
+   ELIMINAR CLIENTE (marcar historico = false)
+   Si quieres eliminar físicamente, usar axios.delete
+================================================ */
+export const deleteCliente = async (id) => {
+  try {
+    const res = await axios.patch(`${API_URL}/${id}`, { historico: false });
+    return res.data;
+  } catch (error) {
+    console.error("Error al eliminar cliente", error);
+    throw error;
+  }
+};
 
-// Función para actualizar un cliente por su id
-export const updateCliente = (id, clienteActualizado) => {
-    return axios.put(`${API_URL}/${id}`, clienteActualizado)
-        .then(res => res.data)
-}
+/* ================================================
+   ACTUALIZAR CLIENTE POR ID
+================================================ */
+export const updateCliente = async (id, clienteActualizado) => {
+  try {
+    const res = await axios.put(`${API_URL}/${id}`, clienteActualizado);
+    return res.data;
+  } catch (error) {
+    console.error("Error al actualizar cliente", error);
+    throw error;
+  }
+};
 
-// 🔹 Buscar cliente por DNI
+/* ================================================
+   BUSCAR CLIENTE POR DNI
+   Devuelve el primer cliente encontrado o null
+================================================ */
 export const getClientePorDni = async (dni) => {
-    try {
-        // Si tu API permite filtrar por DNI (ej. JSON-Server), puedes hacer:
-        const response = await axios.get(`${API_URL}?dni=${dni}`);
-        // Si devuelve un array, retornamos el primer resultado o null si no hay ninguno
-        return response.data.length > 0 ? response.data[0] : null;
-    } catch (error) {
-        console.error('Error buscando cliente por DNI:', error);
-        throw error;
-    }
+  try {
+    const res = await axios.get(API_URL, { params: { dni } });
+    return res.data.length > 0 ? res.data[0] : null;
+  } catch (error) {
+    console.error("Error buscando cliente por DNI:", error);
+    throw error;
+  }
 };

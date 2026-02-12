@@ -34,7 +34,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Middleware CORS - debe ir ANTES de las rutas
 const corsOptions = {
     origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
     credentials: true
 };
@@ -58,30 +58,38 @@ app.use("/api/articulos", articulosRoutes);
 // Verificar variable
 //console.log("MONGODB_URI =", process.env.MONGODB_URI);
 
-app.use("/api/articulos", articulosRoutes, verificarToken, soloAdmin)
-
 // ruta crear sesión checkout
 app.post("/create-checkout-session", async (req, res) => {
     try {
-        const { items } = req.body;
+        const { items, descuento = 0, envio = 0 } = req.body; // 🔹 incluir envío
 
-        const lineItems = items.map((item) => ({
-            price_data: {
-                currency: 'eur',
-                product_data: {
-                    name: item.nombre,
-                },
-                unit_amount: Math.round(item.precio * 100), // convertir a céntimos
-            },
-            quantity: item.cantidad,
-        }));
+        // Calcular subtotal de los items
+        let total = items.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+
+        // Restar descuento y sumar envío
+        total = total - descuento + envio;
+
+        // Evitar total negativo
+        total = Math.max(0, total);
+
+        // Convertir a céntimos
+        const totalCents = Math.round(total * 100);
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: lineItems,
+            line_items: [
+                {
+                    price_data: {
+                        currency: 'eur',
+                        product_data: { name: 'Compra en la tienda' },
+                        unit_amount: totalCents,
+                    },
+                    quantity: 1,
+                },
+            ],
             mode: 'payment',
-            success_url: 'http://localhost:5173/success', //crear estos componentes en frontend
-            cancel_url: 'http://localhost:5173/cancel', //crear estos componentes en frontend
+            success_url: 'http://localhost:5173/success',
+            cancel_url: 'http://localhost:5173/cancel',
         });
 
         res.json({ url: session.url });

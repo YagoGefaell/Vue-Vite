@@ -41,7 +41,7 @@
             <router-link class="nav-link" to="/ventas">Ventas</router-link>
           </li>
           <li class="nav-item" v-if="isAdmin">
-            <router-link class="nav-link" to="/taller">Taller</router-link>
+            <router-link class="nav-link" to="/citas-taller">Taller</router-link>
           </li>  
           <li class="nav-item">
             <router-link class="nav-link" to="/contacto">Contacto</router-link>

@@ -2,11 +2,12 @@
   <div class="container mt-4">
     <h2>Mi Cesta</h2>
 
+    <!-- Mensaje cesta vacía -->
     <div v-if="cesta.items.length === 0" class="alert alert-info">
       La cesta está vacía.
     </div>
 
-    <!-- Mensaje de autenticación requerida -->
+    <!-- Mensaje autenticación requerida -->
     <div
       v-if="!estaAutenticado && cesta.items.length > 0"
       class="alert alert-warning d-flex justify-content-between align-items-center"
@@ -20,7 +21,30 @@
       </router-link>
     </div>
 
-    <!-- Tabla de productos (se muestra siempre que haya items) -->
+    <!-- Campo de cupón -->
+    <div v-if="cesta.items.length > 0" class="d-flex align-items-center mb-3">
+      <input
+        type="text"
+        class="form-control form-control-sm me-2"
+        placeholder="Introduce cupón"
+        v-model="cupon"
+        :disabled="cuponAplicado"
+      />
+      <button
+        class="btn btn-outline-primary btn-sm"
+        @click="aplicarCupon"
+        :disabled="cuponAplicado"
+      >
+        {{ cuponAplicado ? "Cupón aplicado" : "Aplicar" }}
+      </button>
+    </div>
+
+    <!-- Descuento aplicado -->
+    <div v-if="descuento > 0" class="alert alert-success py-1">
+      Cupón aplicado: -{{ descuento.toFixed(2) }}€
+    </div>
+
+    <!-- Tabla de productos -->
     <div v-if="cesta.items.length > 0">
       <table class="table">
         <thead>
@@ -35,7 +59,7 @@
         <tbody>
           <tr v-for="item in cesta.items" :key="item.id">
             <td>{{ item.nombre }}</td>
-            <td>{{ item.precio }}</td>
+            <td>{{ item.precio.toFixed(2) }}€</td>
             <td>
               <button
                 class="btn btn-sm btn-outline-secondary me-1"
@@ -51,7 +75,7 @@
                 +
               </button>
             </td>
-            <td>{{ item.precio * item.cantidad }}</td>
+            <td>{{ (item.precio * item.cantidad).toFixed(2) }}€</td>
             <td>
               <button
                 class="btn btn-sm btn-danger"
@@ -64,8 +88,23 @@
         </tbody>
         <tfoot>
           <tr class="fw-bold">
-            <td colspan="3" class="text-end">Total:</td>
+            <td colspan="3" class="text-end">Subtotal:</td>
             <td>{{ cesta.totalPrecio.toFixed(2) }}€</td>
+            <td></td>
+          </tr>
+          <tr v-if="envio > 0" class="fw-bold">
+            <td colspan="3" class="text-end">Envío (5%):</td>
+            <td>{{ envio.toFixed(2) }}€</td>
+            <td></td>
+          </tr>
+          <tr class="fw-bold">
+            <td colspan="3" class="text-end">Descuento:</td>
+            <td>-{{ descuento.toFixed(2) }}€</td>
+            <td></td>
+          </tr>
+          <tr class="fw-bold">
+            <td colspan="3" class="text-end">Total:</td>
+            <td>{{ (cesta.totalPrecio + envio - descuento).toFixed(2) }}€</td>
             <td>
               <button
                 class="btn btn-success btn-sm justify-content-end mx-3"
@@ -88,30 +127,75 @@ import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
 import { ref, computed } from "vue";
 
+// Store de la cesta
 const cesta = useCestaStore();
 const router = useRouter();
 
-// Computed para verificar si el usuario está autenticado
-const estaAutenticado = computed(() => {
-  return sessionStorage.getItem("token") !== null;
+// Estado cupón y descuento
+const cupon = ref("");
+const descuento = ref(0);
+const cuponAplicado = ref(false);
+
+// Envío como porcentaje
+const porcentajeEnvio = 0.05;
+const envio = computed(() => {
+  if (cesta.items.length > 0 /* && cesta.totalPrecio < 20000 */) {
+    return cesta.totalPrecio * porcentajeEnvio;
+  }
+  return 0;
 });
 
+// Computed para autenticación
+const estaAutenticado = computed(() => sessionStorage.getItem("token") !== null);
+
+// Funciones de la cesta
 const incrementar = (id) => cesta.incrementar(id);
 const decrementar = (id) => cesta.decrementar(id);
 const removeProducto = (id) => cesta.removeProducto(id);
 
+// Función de alerta rápida
 const mostrarAlerta = (title, text, icon) => {
   Swal.fire({ title, text, icon });
 };
 
-// Iniciar pago con Stripe usando axios
+// Aplicar cupón
+const aplicarCupon = () => {
+  if (cuponAplicado.value) {
+    mostrarAlerta("Aviso", "Ya se ha aplicado un cupón", "info");
+    return;
+  }
+
+  if (!cupon.value.trim()) {
+    mostrarAlerta("Aviso", "Introduce un código de cupón válido", "warning");
+    return;
+  }
+
+  // Solo cupones del 10%
+  const cuponesDisponibles = {
+    "DESCUENTO10": 0.1,
+    "OFF10": 0.1,
+  };
+
+  const valor = cuponesDisponibles[cupon.value.trim().toUpperCase()];
+
+  if (!valor) {
+    mostrarAlerta("Error", "Cupón no válido", "error");
+    descuento.value = 0;
+    return;
+  }
+
+  descuento.value = cesta.totalPrecio * valor;
+  cuponAplicado.value = true;
+  Swal.fire("Éxito", `Descuento aplicado: ${descuento.value.toFixed(2)}€`, "success");
+};
+
+// Iniciar pago
 const iniciarPago = async () => {
   if (!cesta.items.length) {
     mostrarAlerta("Aviso", "La cesta está vacía", "warning");
     return;
   }
 
-  // Verificar si el usuario está registrado/autenticado
   const token = sessionStorage.getItem("token");
   if (!token) {
     Swal.fire({
@@ -122,43 +206,44 @@ const iniciarPago = async () => {
       confirmButtonText: "Iniciar Sesión",
       cancelButtonText: "Cancelar",
     }).then((result) => {
-      if (result.isConfirmed) {
-        router.push("/login");
-      }
+      if (result.isConfirmed) router.push("/login");
     });
-    // No hacer nada, el mensaje ya se muestra en el template
     return;
   }
 
   try {
-    // GUARDAR los datos del carrito en localStorage ANTES de ir a Stripe
+    // Guardar datos localmente
     localStorage.setItem(
       "ultimaCompra",
       JSON.stringify({
         items: cesta.items,
-        total: cesta.totalPrecio,
+        subtotal: cesta.totalPrecio,
+        descuento: descuento.value,
+        envio: envio.value,
+        cupon: cupon.value,
         fecha: new Date().toISOString(),
-      }),
+      })
     );
 
-    // Crear la sesión de pago en el backend
+    // Enviar items y descuento al backend
     const response = await axios.post(
       "http://localhost:5000/create-checkout-session",
       {
         items: cesta.items,
-        amount: cesta.totalPrecio,
-      },
+        descuento: descuento.value,
+        envio: envio.value,
+      }
     );
 
     const session = response.data;
 
     if (!session.url) {
-      console.error("❌ No se recibió URL de Stripe.");
+      console.error("No se recibió URL de Stripe");
       mostrarAlerta("Error", "No se pudo iniciar el pago", "error");
       return;
     }
 
-    // Redirigir directamente al checkout de Stripe
+    // Redirigir al checkout
     window.location.href = session.url;
   } catch (error) {
     console.error("Error en iniciarPago:", error);
@@ -166,5 +251,3 @@ const iniciarPago = async () => {
   }
 };
 </script>
-
-<style scoped></style>
