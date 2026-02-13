@@ -651,18 +651,18 @@ const confirmarReservaAdmin = async () => {
 }
 
 .btn-estado.vendido {
-  background-color: #6c757d;
+  background-color: #a6aaad;
   cursor: not-allowed;
 }
 
 .btn-estado.reservado {
-  background-color: #ffc107;
+  background-color: #a6aaad;
   cursor: not-allowed;
   color: #000;
 }
 
 .btn-estado.en-cesta {
-  background-color: #28a745;
+  background-color: #2eca53;
   cursor: not-allowed;
 }
 

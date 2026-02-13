@@ -17,15 +17,16 @@
             <div
               class="form-check form-check-inline"
               v-for="tipo in tiposVehiculo"
+              :key="tipo"
             >
               <input
                 class="form-check-input text"
                 type="radio"
-                id="tipo-coche"
+                :id="'tipo-' + tipo"
                 :value="tipo"
                 v-model="vehiculo.tipo"
               />
-              <label class="form-check-label" for="tipo-coche">{{
+              <label class="form-check-label" :for="'tipo-' + tipo">{{
                 tipo
               }}</label>
             </div>
@@ -132,6 +133,7 @@
             <option disabled value="">Seleccione</option>
             <option
               v-for="combustible in tiposCombustible"
+              :key="combustible"
               :value="combustible"
             >
               {{ combustible }}
@@ -186,7 +188,7 @@
         </div>
 
         <div class="col-12 col-md-2 d-flex align-items-center">
-          <label class="orm-label mb-0 me-3 text-nowrap fw-medium"
+          <label class="form-label mb-0 me-3 text-nowrap fw-medium"
             >Estado:</label
           >
           <select
@@ -475,8 +477,8 @@
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody v-for="(vehiculo, index) in vehiculosFiltrados">
-          <tr class="text-center">
+        <tbody>
+          <tr v-for="vehiculo in vehiculosFiltrados" :key="vehiculo._id || vehiculo.matricula" class="text-center">
             <td>{{ vehiculo.matricula }}</td>
             <td>{{ vehiculo.marca }}</td>
             <td>{{ vehiculo.modelo }}</td>
@@ -489,14 +491,14 @@
               <button
                 type="button"
                 class="btn btn-sm btn-danger me-2"
-                @click="eliminarVehiculo(index)"
+                @click="eliminarVehiculo(vehiculo._id)"
               >
                 <i class="bi bi-trash"></i>
               </button>
               <button
                 type="button"
                 class="btn btn-sm btn-warning me-1"
-                @click="editarVehiculo(vehiculo.matricula)"
+                @click="editarVehiculo(vehiculo)"
               >
                 <i class="bi bi-pencil"></i>
               </button>
@@ -511,9 +513,8 @@
 <script setup>
 import Swal from "sweetalert2";
 import { ref, computed, onMounted } from "vue";
-import { addArticulo } from "@/api/articulos.js";
+import { addArticulo, getArticulos, deleteArticulo } from "@/api/articulos.js";
 import provmuniData from "@/data/provmuni.json";
-import { getArticulos } from "../api/articulos";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -826,12 +827,62 @@ function imprimirPDF() {
   doc.save("listado_vehiculos.pdf");
 }
 
-async function editarVehiculo(matricula) {
-  const vehiculoActual = vehiculos.value.find(matricula);
-  if (!vehiculoActual) {
-    return;
-  }
+function editarVehiculo(vehiculoEditar) {
+  // Cargar los datos del vehículo en el formulario
+  vehiculo.value = {
+    ...vehiculoEditar,
+    ubicacion: { ...vehiculoEditar.ubicacion },
+    contacto: { ...vehiculoEditar.contacto },
+  };
   editando.value = true;
+  
+  // Filtrar municipios de la provincia seleccionada
+  if (vehiculo.value.ubicacion.provincia) {
+    filtrarCiudades();
+  }
+  
+  // Scroll al formulario
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function eliminarVehiculo(id) {
+  const result = await Swal.fire({
+    title: '¿Eliminar vehículo?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    await deleteArticulo(id);
+    
+    // Eliminar del array local después de eliminar del backend
+    const index = vehiculos.value.findIndex(v => v._id === id);
+    if (index > -1) {
+      vehiculos.value.splice(index, 1);
+    }
+    
+    Swal.fire({
+      icon: 'success',
+      title: 'Vehículo eliminado',
+      text: 'El vehículo ha sido eliminado correctamente.',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    console.error('Error al eliminar vehículo:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo eliminar el vehículo.',
+      timer: 2000,
+    });
+  }
 }
 </script>
 <style scoped>
