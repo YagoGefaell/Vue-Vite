@@ -17,6 +17,9 @@ import TablaSuccess from "../components/TablaSuccess.vue";
 import TablaCanceL from "../components/TablaCanceL.vue";
 import Pedidos from "../components/Pedidos.vue";
 import Cesta from "../components/Cesta.vue";
+import Empleo from "../components/Empleo.vue";
+import Solicitudes from "../components/Solicitudes.vue";
+import GestionReservas from "../components/GestionReservas.vue";
 
 const routes = [
   {
@@ -106,14 +109,33 @@ const routes = [
     name: "TablaCanceL",
     component: TablaCanceL,
   },
+  {
+    path: "/empleo",
+    name: "Empleo",
+    component: Empleo,
+    meta: { requiresNoAdmin: true },
+  },
+  {
+    path: "/solicitudes",
+    name: "Solicitudes",
+    component: Solicitudes,
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: "/gestion-reservas",
+    name: "GestionReservas",
+    component: GestionReservas,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
 router.beforeEach(async (to, from, next) => {
   const token = sessionStorage.getItem("token");
+  const isAdmin = sessionStorage.getItem("isAdmin") === "true";
 
   // Si la ruta requiere ser admin
   if (to.meta.requiresAdmin) {
@@ -125,6 +147,13 @@ router.beforeEach(async (to, from, next) => {
 
     if (!admin) {
       return next({ name: "Inicio" }); // acceso denegado
+    }
+  }
+
+  // Si la ruta requiere NO ser admin (usuarios normales)
+  if (to.meta.requiresNoAdmin) {
+    if (isAdmin) {
+      return next({ name: "Inicio" }); // admin no puede acceder
     }
   }
 

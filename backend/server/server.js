@@ -14,6 +14,8 @@ import contactoRoutes from "./contactos.js";
 
 import articulosRoutes from "./articulosRoutes.js"; // ruta al router backend
 import facturasRoutes from "./facturasRoutes.js"; // ruta al router de facturas
+import solicitudesRoutes from "./solicitudesRoutes.js"; // ruta al router de solicitudes
+import reservasRoutes from "./reservasRoutes.js"; // ruta al router de reservas
 import { soloAdmin, verificarToken } from "./authController.js";
 
 // Configurar __dirname primero para poder usarlo con dotenv
@@ -46,6 +48,8 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/contacto", contactoRoutes);
 app.use("/api/facturas", verificarToken, facturasRoutes);
+app.use("/api/solicitudes", solicitudesRoutes);
+app.use("/api/reservas", reservasRoutes);
 
 
 

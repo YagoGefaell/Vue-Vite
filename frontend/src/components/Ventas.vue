@@ -73,13 +73,36 @@
 
             <div class="card-footer text-center bg-light">
               <button 
+              v-if="auto.estado === 'vendido'"
+              class="btn btn-sm btn-estado vendido"
+              disabled
+            >
+              <i class="bi bi-x-circle"></i>
+              VENDIDO
+            </button>
+            <button 
+              v-else-if="auto.estado === 'reservado'"
+              class="btn btn-sm btn-estado reservado"
+              disabled
+            >
+              <i class="bi bi-calendar-check"></i>
+              RESERVADO
+            </button>
+            <button 
+              v-else-if="estaEnCesta(auto._id)"
+              class="btn btn-sm btn-estado en-cesta"
+              disabled
+            >
+              <i class="bi bi-cart-check"></i>
+              EN CESTA
+            </button>
+            <button 
+              v-else
               @click="agregarACesta(auto)"
               class="btn btn-sm btn-estado"
-              :class="{ vendido: auto.estado === 'vendido', reservado: auto.estado === 'reservado' }"
-              :disabled="auto.estado === 'vendido' || auto.estado === 'reservado'"
             >
-              <i class="bi bi-cart"></i>
-              {{ auto.estado === 'reservado' ? 'RESERVADO' : auto.estado.toUpperCase() }}
+              <i class="bi bi-cart-plus"></i>
+              AÑADIR A CESTA
             </button>
 
             </div>
@@ -136,6 +159,14 @@
             Cerrar
             </button>
 
+            <button 
+              v-if="cocheSeleccionado.estado === 'disponible'"
+              class="btn btn-primary" 
+              @click="abrirModalReserva"
+            >
+              <i class="bi bi-calendar-check me-2"></i> Reservar
+            </button>
+
             <button class="btn btn-success" @click="imprimirPDF">
             <i class="bi bi-printer me-2"></i> Descargar PDF
             </button>
@@ -144,24 +175,104 @@
         </div>
     </div>
     </section>
+
+    <!-- Modal de Formulario Admin para Reserva -->
+    <section
+      v-if="mostrarModalReservaAdmin"
+      class="modal fade show"
+      style="display: block; background: rgba(0,0,0,0.6)"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-calendar-check me-2"></i>
+              Reservar Vehículo para Cliente
+            </h5>
+            <button class="btn-close btn-close-white" @click="cerrarModalReservaAdmin"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="alert alert-info">
+              <strong>{{ cocheSeleccionado.marca }} {{ cocheSeleccionado.modelo }}</strong>
+              ({{ cocheSeleccionado.anio }}) - {{ cocheSeleccionado.precio }}€
+            </div>
+
+            <form @submit.prevent="confirmarReservaAdmin">
+              <div class="mb-3">
+                <label for="nombreCliente" class="form-label fw-medium">Nombre del Cliente *</label>
+                <input
+                  type="text"
+                  id="nombreCliente"
+                  v-model="datosReservaAdmin.nombre"
+                  class="form-control"
+                  required
+                  placeholder="Nombre completo del cliente"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="emailCliente" class="form-label fw-medium">Email del Cliente *</label>
+                <input
+                  type="email"
+                  id="emailCliente"
+                  v-model="datosReservaAdmin.email"
+                  class="form-control"
+                  required
+                  placeholder="correo@ejemplo.com"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="idCliente" class="form-label fw-medium">ID del Cliente</label>
+                <input
+                  type="text"
+                  id="idCliente"
+                  v-model="datosReservaAdmin.usuarioId"
+                  class="form-control"
+                  placeholder="Opcional - ID del cliente en el sistema"
+                />
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">
+                  <i class="bi bi-check-circle me-2"></i>Confirmar Reserva
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { getArticulos } from "@/api/articulos.js";
+import { addReserva } from "@/api/reservas.js";
 import { useCestaStore } from "@/store/cesta.js";
 import cachau from "@/assets/cachau.png";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import Swal from "sweetalert2";
+import { jwtDecode } from "jwt-decode";
 
 const cestaStore = useCestaStore(); 
 const vehiculos = ref([]);
 const mostrarModal = ref(false);
+const mostrarModalReservaAdmin = ref(false);
 const cocheSeleccionado = ref(null);
 const filtroMarca = ref("");
 const filtroCombustible = ref("");
 const filtroEstado = ref("");
+const isAdmin = ref(sessionStorage.getItem("isAdmin") === "true");
+
+const datosReservaAdmin = ref({
+  nombre: "",
+  email: "",
+  usuarioId: "",
+});
 
 onMounted(async () => {
   vehiculos.value = await getArticulos();
@@ -171,9 +282,6 @@ onMounted(async () => {
   vehiculos.value.forEach((coche) => {
     if (vendidos.includes(coche._id)) {
       coche.estado = "vendido";
-    } else if (cestaStore.items.find(item => item.id === coche._id)) {
-      // Si el coche ya está en la cesta, lo marcamos como reservado
-      coche.estado = "reservado";
     }
   });
 });
@@ -204,6 +312,10 @@ const limpiarFiltros = () => {
   filtroEstado.value = "";
 };
 
+const estaEnCesta = (id) => {
+  return cestaStore.items.some(item => item.id === id);
+};
+
 
 const urlImagen = (ruta) => {
   if (!ruta) return cachau;;
@@ -211,7 +323,11 @@ const urlImagen = (ruta) => {
 };
 
 const agregarACesta = (auto) => {
-    // Añadir a la cesta
+    if (auto.estado === "vendido" || auto.estado === "reservado") {
+        return;
+    }
+
+    // Añadir a la cesta sin cambiar el estado del vehículo
     cestaStore.addProducto({
         id: auto._id,
         nombre: `${auto.marca} ${auto.modelo}`,
@@ -219,8 +335,13 @@ const agregarACesta = (auto) => {
         imagen: urlImagen(auto.imagen),
     });
 
-    // Cambiar estado del coche
-    auto.estado = "reservado";
+    Swal.fire({
+      icon: "success",
+      title: "Añadido a la cesta",
+      text: `${auto.marca} ${auto.modelo} se ha añadido a tu cesta.`,
+      timer: 1500,
+      showConfirmButton: false,
+    });
 }
 
 const verDetalles = (auto) => {
@@ -337,6 +458,149 @@ const imprimirPDF = async () => {
 
     doc.save(`vehiculo_${auto.marca}_${auto.modelo}.pdf`);
 };
+
+// Obtener datos del usuario desde el token
+const obtenerDatosUsuario = () => {
+  const token = sessionStorage.getItem("token");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode(token);
+    return {
+      id: decoded.id,
+      nombre: decoded.nombre || "Usuario",
+      email: decoded.email || "",
+    };
+  } catch (error) {
+    console.error("Error al decodificar token:", error);
+    return null;
+  }
+};
+
+const abrirModalReserva = async () => {
+  const usuario = obtenerDatosUsuario();
+  if (!usuario) {
+    Swal.fire({
+      icon: "error",
+      title: "Sesión requerida",
+      text: "Debes iniciar sesión para reservar un vehículo.",
+      timer: 2000,
+    });
+    return;
+  }
+
+  // Si es admin, mostrar formulario para reservar a nombre de otro
+  if (isAdmin.value) {
+    mostrarModalReservaAdmin.value = true;
+    return;
+  }
+
+  // Si es usuario normal, confirmación directa con sus datos
+  const result = await Swal.fire({
+    title: "¿Confirmar reserva?",
+    html: `<p>¿Deseas reservar el vehículo <strong>${cocheSeleccionado.value.marca} ${cocheSeleccionado.value.modelo}</strong>?</p>
+           <p class="text-muted">Precio: ${cocheSeleccionado.value.precio}€</p>`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, reservar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#0d6efd",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const fechaActual = new Date().toISOString().split('T')[0];
+    
+    const nuevaReserva = {
+      vehiculoId: cocheSeleccionado.value._id,
+      nombreVehiculo: `${cocheSeleccionado.value.marca} ${cocheSeleccionado.value.modelo} (${cocheSeleccionado.value.anio})`,
+      usuarioId: usuario.id,
+      usuarioNombre: usuario.nombre,
+      usuarioEmail: usuario.email,
+      fechaInicio: fechaActual,
+      fechaFin: fechaActual,
+    };
+
+    await addReserva(nuevaReserva);
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Reserva creada!",
+      text: "El vehículo ha sido reservado exitosamente.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    // Actualizar el estado del vehículo en la lista
+    const vehiculo = vehiculos.value.find(v => v._id === cocheSeleccionado.value._id);
+    if (vehiculo) {
+      vehiculo.estado = "reservado";
+    }
+
+    mostrarModal.value = false;
+  } catch (error) {
+    console.error("Error al crear reserva:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.response?.data?.error || "No se pudo crear la reserva.",
+      timer: 2500,
+    });
+  }
+};
+
+const cerrarModalReservaAdmin = () => {
+  mostrarModalReservaAdmin.value = false;
+  datosReservaAdmin.value = {
+    nombre: "",
+    email: "",
+    usuarioId: "",
+  };
+};
+
+const confirmarReservaAdmin = async () => {
+  try {
+    const fechaActual = new Date().toISOString().split('T')[0];
+    
+    const nuevaReserva = {
+      vehiculoId: cocheSeleccionado.value._id,
+      nombreVehiculo: `${cocheSeleccionado.value.marca} ${cocheSeleccionado.value.modelo} (${cocheSeleccionado.value.anio})`,
+      usuarioId: datosReservaAdmin.value.usuarioId || `cliente-${Date.now()}`,
+      usuarioNombre: datosReservaAdmin.value.nombre,
+      usuarioEmail: datosReservaAdmin.value.email,
+      fechaInicio: fechaActual,
+      fechaFin: fechaActual,
+    };
+
+    await addReserva(nuevaReserva);
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Reserva creada!",
+      text: `El vehículo ha sido reservado para ${datosReservaAdmin.value.nombre}.`,
+      timer: 2000,
+      showConfirmButton: false,
+    });
+
+    // Actualizar el estado del vehículo en la lista
+    const vehiculo = vehiculos.value.find(v => v._id === cocheSeleccionado.value._id);
+    if (vehiculo) {
+      vehiculo.estado = "reservado";
+    }
+
+    cerrarModalReservaAdmin();
+    mostrarModal.value = false;
+  } catch (error) {
+    console.error("Error al crear reserva:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.response?.data?.error || "No se pudo crear la reserva.",
+      timer: 2500,
+    });
+  }
+};
 </script>
 
 <style scoped>
@@ -388,6 +652,17 @@ const imprimirPDF = async () => {
 
 .btn-estado.vendido {
   background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.btn-estado.reservado {
+  background-color: #ffc107;
+  cursor: not-allowed;
+  color: #000;
+}
+
+.btn-estado.en-cesta {
+  background-color: #28a745;
   cursor: not-allowed;
 }
 
